@@ -1,0 +1,146 @@
+$theme-color: rgb(8, 9, 19);
+$theme-effect-color: rgb(35, 36, 51);
+$text-color: white;
+
+body {
+  // overflow: unset;
+}
+
+.header {
+  position: relative;
+  width: 100%;
+  height: 70px;
+  background: $theme-color;
+  color: $text-color;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  .brand h1 {
+    margin-left: 5%;
+  }
+}
+
+.navbar {
+  position: relative;
+  width: 70%;
+  padding: 5%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  ul {
+    width: 60%;
+    text-align: center;
+  }
+
+  li {
+    display: inline-block;
+    margin-left: 4%;
+    transition: all 0.5s ease;
+    text-align: center;
+    cursor: pointer;
+    padding: 1%;
+    height: 20px;
+    overflow: hidden;
+
+    .head-icon {
+      display: block;
+      font-size: 22px;
+      width: 100%;
+    }
+
+    a {
+      text-decoration: none;
+      font-size: 18px;
+      color: $text-color;
+    }
+
+    a:active,
+    :focus {
+      text-decoration: underline;
+      font-weight: 700;
+    }
+  }
+
+  li:hover {
+    height: 45px;
+  }
+}
+
+.menu-icon {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .menu-icon {
+    display: block;
+    position: fixed;
+    font-size: 25px;
+    right: 40px;
+    border: none;
+    cursor: pointer;
+  }
+
+  .navbar {
+    position: relative;
+    width: 60%;
+    display: none;
+  }
+
+  .navactive {
+    display: inline;
+    position: fixed;
+    bottom: 0;
+    right: 0;
+  }
+
+  .navbar ul {
+    position: absolute;
+    width: 100%;
+    padding: unset;
+    height: 100vh;
+    background-color: $theme-color;
+    
+    li {
+      display: block;
+      width: 100%;
+      height: 40px;
+      text-align: left;
+      margin: unset;
+      border-bottom: 1px solid $theme-effect-color;
+      position: relative;
+      top: 100px;
+      padding: 3%;
+      padding-left: 10%;
+
+      .head-icon {
+        display: inline-block;
+        font-size: 30px;
+        width: unset;
+      }
+
+      a {
+        margin-left: 40px;
+      }
+    }
+    
+    li:hover {
+      background: $theme-effect-color;
+    }
+  }
+}
+
+.footer {
+  background: $theme-color;
+  color: $text-color;
+  text-align: center;
+  padding: 20px;
+
+  svg{
+    font-size: 40px;
+    padding: 0 10px;
+    cursor: pointer;
+  }
+}

@@ -10,6 +10,7 @@
 
 # production
 /build
+/imulators
 
 # misc
 .DS_Store

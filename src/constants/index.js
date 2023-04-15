@@ -1,0 +1,4 @@
+export const HTTP_STATUS_CONTSTANTS = {
+  OK: 200,
+  ERROR_CODE_401: 401,
+};

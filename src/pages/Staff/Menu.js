@@ -1,13 +1,12 @@
 import React from "react";
-import Sidebar from "../../components/Staff/Sidebar";
+import MenuComponent from "../../components/Staff/Menu/Menu.js";
 
-const Menu = () => {
+function Menu() {
   return (
     <>
-      <Sidebar />
-      <h1>Menu</h1>
+      <MenuComponent />
     </>
   );
-};
+}
 
 export default Menu;

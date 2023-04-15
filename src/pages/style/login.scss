@@ -1,0 +1,48 @@
+.login-background {
+  height: 100vh;
+  background: #001133;
+  position: relative;
+
+  .login-container {
+    width: 400px;
+    height: 320px;
+    position: absolute;
+    left:50%;
+    top:50%;
+    transform:translate(-50%,-50%);
+    border: none;
+    border-radius: 10px;
+    background-color: white;
+  }
+
+  .login-content {
+    padding: 10px;
+
+    .text-login {
+      text-align: center;
+      font-size: 24px;
+      padding-top: 10px;
+    }
+
+    input {
+      margin: 8px 0;
+      
+    }
+
+    button {
+      width: 100%;
+      margin: 15px 0;
+      height: 40px;
+      border-radius: 5px;
+      border: none;
+      background-color: #001133;
+      color: white;
+      font-size: 16px;
+
+      &:hover {
+        cursor: pointer;
+        transform: scale(1.1);
+      }
+    }
+  }
+}

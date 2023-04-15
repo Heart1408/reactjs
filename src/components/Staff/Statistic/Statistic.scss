@@ -1,0 +1,34 @@
+$border-color: #cdcecf;
+$dark-border: #414a52;
+$theme-color: #052a49;
+
+.content {
+  p {
+    margin: 5px 0;
+  }
+
+  .item > div {
+    margin: 10px 10px;
+    border: 1px solid $border-color;
+
+    .title {
+      background-color: $border-color;
+      font-size: larger;
+      font-weight: bold;
+      color: $theme-color;
+
+      svg {
+        margin-top: 5px;
+        padding-right: 5px;
+      }
+    }
+
+    > div.ant-row {
+      padding: 0 10px;
+    }
+  }
+
+  .customer-item .progress-custom {
+    text-align: center;
+  }
+}

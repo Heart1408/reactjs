@@ -1,13 +1,8 @@
 import React from "react";
-import Sidebar from "../../components/Staff/Sidebar";
+import Statistic from "../../components/Staff/Statistic";
 
 const Home = () => {
-  return (
-    <>
-      <Sidebar />
-      Home
-    </>
-  );
+  return <Statistic />;
 };
 
 export default Home;
