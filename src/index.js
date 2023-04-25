@@ -2,13 +2,13 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
-import "./styles/global.scss";
 // import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
 // import "../node_modules/font-awesome/css/font-awesome.min.css";
 import { Provider } from "react-redux";
 import { persistor, store } from "./redux/configStore.js";
 import { PersistGate } from "redux-persist/es/integration/react";
 import { QueryClient, QueryClientProvider } from "react-query";
+import "./styles/app.scss";
 
 const queryClient = new QueryClient();
 const root = ReactDOM.createRoot(document.getElementById("root"));

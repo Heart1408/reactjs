@@ -9,7 +9,6 @@ import {
   faUserFriends,
   faAngleDown,
 } from "@fortawesome/free-solid-svg-icons";
-import "./Statistic.scss";
 
 const handleMenuClick = (e) => {
   message.info("Click on menu item.");

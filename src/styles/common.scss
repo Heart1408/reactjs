@@ -1,0 +1,61 @@
+$text-color: rgb(59, 53, 53);
+$hover-color: #b3d9ff;
+$primary-color: rgb(30, 100, 156);
+$border-color:  #cdcecf;
+$background: #e6e1e1;
+
+p {
+  margin: 0;
+}
+
+.title {
+  border-bottom: 3px solid $border-color;
+  padding-bottom: 3px;
+  font-size: 16px;
+  color: $text-color;
+}
+
+.form-search {
+  border: 1px solid $border-color;
+  border-radius: 5px;
+  background-color: white;
+  height: 50px;
+  padding: 0 5px;
+  margin: 10px 0;
+  display: flex;
+  align-items: center;
+}
+
+.model-header {
+  font-size: 16px;
+  font-weight: 500;
+  border-bottom: 3px solid $border-color;
+  margin: 10px 0 20px 0;
+  padding-bottom: 3px;
+}
+
+.ant-layout-header {
+  line-height: unset!important;
+}
+
+.note {
+  display: flex;
+  width: 95%;
+  margin: auto;
+  padding: 10px 0;
+
+  .note-item {
+    width: 22px;
+    height: 15px;
+    border-radius: 2px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  p {
+    margin: 0;
+    line-height: 15px;
+    padding: 0 12px 0 3px;
+  }
+}

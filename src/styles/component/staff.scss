@@ -1,0 +1,25 @@
+.staff-list {
+  .title {
+    font-size: 18px;
+    font-weight: 500;
+  }
+
+  .form-search {
+    margin: 20px 0;
+
+    input {
+      width: 200px;
+    }
+
+    button {
+      background-color: $primary-color;
+      color: white;
+    }
+  }
+
+  table {
+    button {
+      margin-left: 5px;
+    }
+  }
+}

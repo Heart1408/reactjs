@@ -1,5 +1,5 @@
 import React from "react";
-import MenuComponent from "../../components/Staff/Menu/Menu.js";
+import MenuComponent from "../../components/Staff/Menu";
 
 function Menu() {
   return (

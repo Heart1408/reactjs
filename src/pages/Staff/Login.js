@@ -51,7 +51,6 @@ const Login = () => {
 
   return (
     <>
-      {/* <LoginForm /> */}
       <div className="login-background">
         <div className="login-container">
           <form className="login-content" onSubmit={formik.handleSubmit}>

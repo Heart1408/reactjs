@@ -1,0 +1,73 @@
+.customer {
+  .title {
+    font-weight: 500;
+    font-size: 18px;
+  }
+
+  .form-search {
+    margin-top: 20px;
+  }
+
+  .item {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    padding: 5px 10px;
+
+    .status {
+      display: flex;
+      justify-content: end;
+
+      p {
+        margin-left: 5px;
+        background-color: grey;
+        border-radius: 3px;
+        padding: 3px 10px;
+        color: white;
+      }
+    }
+  }
+}
+
+.booking-detail {
+  margin-left: 20px;
+  margin-top: 20px;
+  border: 2px solid $border-color;
+  border-radius: 5px;
+
+  .title {
+    background-color: $border-color;
+    padding: 10px;
+    font-weight: 500;
+  }
+
+  .statistic {
+    padding: 10px 20px;
+
+    p {
+      font-size: 16px;
+      padding-top: 3px;
+    }
+
+    .customer-name {
+      font-weight: 500;
+    }
+
+    svg {
+      margin-right: 3px;
+    }
+
+    .success {
+      color: green;
+    }
+
+    .cancel {
+      color: red;
+    }
+  }
+
+  .details {
+    padding: 0 10px;
+    margin-bottom: 20px;
+  }
+}

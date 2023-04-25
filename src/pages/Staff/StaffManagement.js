@@ -1,29 +1,11 @@
 import React, { createContext, useState } from "react";
-import ShiftManager from "../../components/Staff/StaffManager/ShiftManager";
-import Permission from "../../components/Staff/StaffManager/Permission";
-import PermissionModal from "../../components/Staff/StaffManager/PermissionModal";
-import { Tabs } from "antd";
+// import ShiftManager from "../../components/Staff/StaffManager/ShiftManager";
+import StaffManager from "../../components/Staff/StaffManager";
+import AddStaffModal from "../../components/Staff/StaffManager/AddStaffModal";
 
 export const PermissionContext = createContext();
 
 const StaffManagement = () => {
-
-  const onChangeTab = (key) => {
-    console.log(key);
-  };
-
-  const tabs = [
-    {
-      key: "1",
-      label: `Danh sách`,
-      children: <Permission />,
-    },
-    {
-      key: "2",
-      label: `Lịch làm việc`,
-      children: <ShiftManager />,
-    },
-  ];
 
   const [isAddStaffModalOpen, setIsAddStaffModalOpen] = useState(false);
 
@@ -44,8 +26,8 @@ const StaffManagement = () => {
           onHideAddStaffModal: hideAddStaffModal,
         }}
       >
-        <Tabs defaultActiveKey="1" items={tabs} onChange={onChangeTab} />;
-        <PermissionModal />
+        <StaffManager />
+        <AddStaffModal />
       </PermissionContext.Provider>
     </div>
   );

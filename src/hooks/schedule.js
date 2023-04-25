@@ -4,6 +4,7 @@ import {
   getListTableAPI,
   getCustomerInfoAPI,
   createScheduleAPI,
+  getTableStatusCurrentAPI,
 } from "../services/schedule";
 import { useMutation, useQuery } from "react-query";
 import { message } from "antd";
@@ -124,4 +125,28 @@ export const useCreateSchedule = (callback) => {
   );
 
   return useMutationCreateSchedule;
+};
+
+export const useGetTableCurrent = (table_id) => {
+  const handleGetTableCurrent = async () => {
+    try {
+      const response = await getTableStatusCurrentAPI(table_id);
+      if (!response?.success) {
+        throw response?.message;
+      }
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  const useFetchTableCurrent = useQuery(
+    ["getTableInfo", table_id],
+    handleGetTableCurrent,
+    {
+      refetchOnWindowFocus: false,
+    }
+  );
+
+  return useFetchTableCurrent;
 };

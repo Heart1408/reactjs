@@ -1,18 +1,20 @@
 //customer
-import Home from "../pages/Customer/Home";
+import CusMenu from "../pages/Customer/Menu";
+import Booking from "../pages/Customer/Booking";
 
 //staff
 import Login from "../pages/Staff/Login";
 import Admin from "../pages/Staff/Home";
-import Table from "../pages/Staff/Table";
 import Menu from "../pages/Staff/Menu";
-import Chat from "../pages/Staff/Chat";
+import Feedback from "../pages/Staff/Feedback";
 import StaffManagement from "../pages/Staff/StaffManagement";
 import TableSchedule from "../pages/Staff/TableSchedule";
+import Customer from "../pages/Staff/Customer";
 import Error from "../pages/Error";
 
-const publicRoutes = [
-  { path: "/", exact: true, component: Home },
+const customerRoutes = [
+  { path: "/customer/menu", exact: true, component: CusMenu },
+  { path: "/customer/booking", exact: true, component: Booking },
 ];
 
 const staffLoginRoute = { path: "/staff/login", component: Login };
@@ -20,11 +22,11 @@ const errorPage = { path: "/error", component: Error };
 
 const staffRoutes = [
   { path: "/staff/home", component: Admin },
-  { path: "/staff/order", component: Table },
   { path: "/staff/menu", component: Menu },
-  { path: "/staff/chat", component: Chat },
+  { path: "/staff/feedback", component: Feedback },
   { path: "/staff/staffmanagement", component: StaffManagement },
   { path: "/staff/tableschedule", component: TableSchedule },
+  { path: "/staff/customermanagement", component: Customer },
 ];
 
-export { publicRoutes, staffRoutes, staffLoginRoute, errorPage };
+export { customerRoutes, staffRoutes, staffLoginRoute, errorPage };

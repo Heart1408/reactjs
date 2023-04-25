@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 import Sidebar from "../../components/Staff/Sidebar";
 import selectAuthentication from "../../redux/login/selector";
@@ -6,17 +6,15 @@ import { useSelector, useDispatch } from "react-redux";
 import { getToken } from "../../services/api";
 import { isExpired } from "../../utils/common";
 import { handleLogout } from "../../redux/login/slice";
+import Logo from "../../components/Logo";
 
-import {
-  MenuFoldOutlined,
-  MenuUnfoldOutlined,
-  UserOutlined,
-} from "@ant-design/icons";
-import { Layout, theme, Row, Col, Avatar } from "antd";
+import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
+import { Layout, theme, Row, Col } from "antd";
 
 const { Header, Content } = Layout;
 
 function Layouts() {
+  const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState(false);
   const {
     token: { colorBgContainer },
@@ -26,7 +24,7 @@ function Layouts() {
   const token = useSelector(
     (state) => state.AuthenticationSlice?.authenticationToken
   );
-  // const [isLogin, setIsLogin] = useState(token !== "");
+  const [isLogin, setIsLogin] = useState(token !== "");
 
   if (isExpired(token)) {
     dispatch(handleLogout({}));
@@ -36,14 +34,13 @@ function Layouts() {
   }
 
   return (
-    <>
-      {/* {isLogin && ( */}
+    isLogin && (
       <Layout>
         <Sidebar collapsed={collapsed} />
         <Layout className="site-layout">
           <Header style={{ padding: 0, background: colorBgContainer }}>
             <Row>
-              <Col md={18}>
+              <Col md={17}>
                 {React.createElement(
                   collapsed ? MenuUnfoldOutlined : MenuFoldOutlined,
                   {
@@ -52,8 +49,10 @@ function Layouts() {
                   }
                 )}
               </Col>
-              <Col md={6}>
-                <Avatar icon={<UserOutlined />}></Avatar>
+              <Col md={7}>
+                <div>
+                  <Logo />
+                </div>
               </Col>
             </Row>
           </Header>
@@ -69,8 +68,7 @@ function Layouts() {
           </Content>
         </Layout>
       </Layout>
-      {/* )} */}
-    </>
+    )
   );
 }
 

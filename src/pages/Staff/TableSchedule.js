@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import {
   getFloorAPI,
   getListTableAPI,
@@ -6,11 +6,13 @@ import {
 } from "../../services/schedule";
 import ScheduleItem from "../../components/Staff/Order/Schedule/Item";
 import AddShift from "../../components/Staff/Order/Schedule/AddShift";
-import { Button, Select, Table, Row } from "antd";
+import { STATUS_TABLE_COLOR } from "../../constants";
+import Layout from "../../components/Staff/Order/Layout";
+import { Button, Select, Table, Row, Tabs } from "antd";
 import { format } from "date-fns";
 
 function TableSchedule() {
-  const formatDate = "dd-MM-yyy";
+  const formatDate = "dd-MM-yyyy";
   const formatDBDate = "yyyy-MM-dd";
   const today = new Date();
   const tomorrow = new Date(today);
@@ -254,28 +256,71 @@ function TableSchedule() {
     },
   ];
 
+  const detailTabs = [
+    {
+      key: "1",
+      label: `Quản lý bàn`,
+      children: <Layout listFloor={listFloor} />,
+    },
+    {
+      key: "2",
+      label: `Lịch đặt bàn`,
+      children: (
+        <>
+          <Row justify="space-between">
+            <Select
+              defaultValue={date[0]}
+              style={{ width: 120, marginBottom: "25px", marginTop: "15px" }}
+              options={date}
+              onChange={(value) => {
+                setSelectedDate(value);
+              }}
+            />
+            <AddShift listFloor={listFloor} />
+          </Row>
+
+          <Row className="note" style={{ width: "100%" }}>
+            <p>Trạng thái lịch đặt bàn: </p>
+            <Row>
+              <div
+                className="note-item"
+                style={{ background: STATUS_TABLE_COLOR.READY }}
+              ></div>{" "}
+              <p>Chưa đến</p>
+            </Row>
+            <Row>
+              <div
+                className="note-item"
+                style={{ background: STATUS_TABLE_COLOR.NOTREADY }}
+              ></div>{" "}
+              <p>Đã đến</p>
+            </Row>
+            <Row>
+              <div
+                className="note-item"
+                style={{ background: STATUS_TABLE_COLOR.GUESTS }}
+              ></div>{" "}
+              <p>Đã hủy</p>
+            </Row>
+          </Row>
+
+          <Table
+            columns={columns}
+            dataSource={data}
+            pagination={{ pageSize: 4 }}
+            scroll={{
+              x: 1280,
+              // y: 600,
+            }}
+          />
+        </>
+      ),
+    },
+  ];
+
   return (
     <>
-      <Row justify="space-between">
-        <Select
-          defaultValue={date[0]}
-          style={{ width: 120, marginBottom: "25px", marginTop: "15px" }}
-          options={date}
-          onChange={(value) => {
-            setSelectedDate(value);
-          }}
-        />
-        <AddShift listFloor={listFloor} />
-      </Row>
-
-      <Table
-        columns={columns}
-        dataSource={data}
-        scroll={{
-          x: 1280,
-          // y: 600,
-        }}
-      />
+      <Tabs defaultActiveKey="1" items={detailTabs} />
     </>
   );
 }

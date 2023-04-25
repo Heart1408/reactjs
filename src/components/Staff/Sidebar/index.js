@@ -12,8 +12,12 @@ import {
   faBowlFood,
   faMapLocation,
   faComment,
+  faChartLine,
+  faRightFromBracket,
+  faUsers,
 } from "@fortawesome/free-solid-svg-icons";
-import "./Sidebar.scss";
+import { UserOutlined } from "@ant-design/icons";
+import { Avatar } from "antd";
 
 const { Sider } = Layout;
 
@@ -39,7 +43,7 @@ function Sidebar(props) {
       key: "1",
       label: (
         <NavLink to="/staff/home" className="list-group-item">
-          <i className="fa fa-home fa-2x"></i>
+          <FontAwesomeIcon icon={faChartLine} size="lg" />
           <span className={`nav-text ${hiddenClass}`}>Tổng quan</span>
         </NavLink>
       ),
@@ -47,32 +51,42 @@ function Sidebar(props) {
     {
       key: "2",
       label: (
-        <NavLink className="list-group-item">
+        <NavLink to="/staff/tableschedule" className="list-group-item">
           <FontAwesomeIcon icon={faTable} size="lg" />
           <span className={`nav-text ${hiddenClass}`}> Đặt bàn</span>
         </NavLink>
       ),
-      children: [
-        {
-          key: "21",
-          label: (
-            <NavLink to="/staff/order" className="list-group-item">
-              <span className={`nav-text ${hiddenClass}`}>Chi tiết</span>
-            </NavLink>
-          ),
-        },
-        {
-          key: "22",
-          label: (
-            <NavLink to="/staff/tableschedule" className="list-group-item">
-              <span className={`nav-text ${hiddenClass}`}> Lịch đặt bàn</span>
-            </NavLink>
-          ),
-        },
-      ],
     },
     {
       key: "3",
+      label: (
+        <NavLink to="/staff/menu" className="list-group-item">
+          <FontAwesomeIcon icon={faBowlFood} size="lg" />
+          <span className={`nav-text ${hiddenClass}`}>Thực đơn</span>
+        </NavLink>
+      ),
+    },
+    {
+      key: "4",
+      label: (
+        <NavLink to="/staff/feedback" className="list-group-item">
+          <FontAwesomeIcon icon={faComment} size="lg" />
+          <span className="new-feedback">2</span>
+          <span className={`nav-text ${hiddenClass}`}>Phản hồi</span>
+        </NavLink>
+      ),
+    },
+    {
+      key: "5",
+      label: (
+        <NavLink to="/staff/customermanagement" className="list-group-item">
+          <FontAwesomeIcon icon={faUsers} size="lg" />
+          <span className={`nav-text ${hiddenClass}`}>Khách hàng</span>
+        </NavLink>
+      ),
+    },
+    {
+      key: "6",
       label: (
         <NavLink to="/staff/staffmanagement" className="list-group-item">
           <FontAwesomeIcon icon={faUserTie} size="lg" />
@@ -81,46 +95,7 @@ function Sidebar(props) {
       ),
     },
     {
-      key: "4",
-      label: (
-        <NavLink className="list-group-item">
-          <FontAwesomeIcon icon={faBowlFood} size="lg" />
-          <span className={`nav-text ${hiddenClass}`}>Thực đơn</span>
-        </NavLink>
-      ),
-      children: [
-        {
-          key: "41",
-          label: (
-            <NavLink to="/staff/menu" className="list-group-item">
-              <span className={`nav-text ${hiddenClass}`}>Danh sách</span>
-            </NavLink>
-          ),
-        },
-        {
-          key: "42",
-          label: (
-            <NavLink to="/staff/menu" className="list-group-item">
-              <span className={`nav-text ${hiddenClass}`}>
-                {" "}
-                Thực đơn theo ngày
-              </span>
-            </NavLink>
-          ),
-        },
-      ],
-    },
-    {
-      key: "5",
-      label: (
-        <NavLink to="/staff/chat" className="list-group-item">
-          <FontAwesomeIcon icon={faComment} size="lg" />
-          <span className={`nav-text ${hiddenClass}`}>Chat</span>
-        </NavLink>
-      ),
-    },
-    {
-      key: "6",
+      key: "7",
       label: (
         <NavLink to="#" className="list-group-item">
           <FontAwesomeIcon icon={faMapLocation} size="lg" />
@@ -129,10 +104,10 @@ function Sidebar(props) {
       ),
     },
     {
-      key: "7",
+      key: "8",
       label: (
         <NavLink className="list-group-item" onClick={handleLogoutRequest}>
-          <i className="fa fa-power-off fa-2x"></i>
+          <FontAwesomeIcon icon={faRightFromBracket} size="lg" />
           <span className={`nav-text ${hiddenClass}`}>Logout</span>
         </NavLink>
       ),
@@ -141,7 +116,10 @@ function Sidebar(props) {
 
   return (
     <Sider trigger={null} collapsible collapsed={collapsed} className="sidebar">
-      <div className="logo" />
+      <div className="avatar">
+        <Avatar icon={<UserOutlined />}></Avatar>
+        <p>Tâm Vũ</p>
+      </div>
       <Menu
         theme="dark"
         mode="inline"

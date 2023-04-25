@@ -1,11 +1,12 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import {
-  publicRoutes,
+  customerRoutes,
   staffRoutes,
   staffLoginRoute,
   errorPage,
 } from "./routes";
 import Layout from "./pages/Staff/Layout";
+import Layout_Cus from "./pages/Customer/Layout";
 import "./App.scss";
 
 import { useSelector } from "react-redux";
@@ -19,7 +20,7 @@ function App() {
     <>
       <Router>
         <Routes>
-          {publicRoutes.map((route, index) => {
+          {/* {publicRoutes.map((route, index) => {
             const Page = route.component;
             return (
               <Route
@@ -34,7 +35,14 @@ function App() {
                 }
               />
             );
-          })}
+          })} */}
+
+          <Route path="customer" element={<Layout_Cus />}>
+            {customerRoutes.map((route, index) => {
+              const Page = route.component;
+              return <Route key={index} path={route.path} element={<Page />} />;
+            })}
+          </Route>
 
           <Route
             path={staffLoginRoute.path}
@@ -44,16 +52,13 @@ function App() {
           {console.log("check", staff !== undefined)}
 
           {/* {staff !== null && staff !== undefined && ( */}
-            <Route path="staff" element={<Layout />}>
-              {staffRoutes.map((route, index) => {
-                const Page = route.component;
-                return (
-                  <Route key={index} path={route.path} element={<Page />} />
-                );
-              })}
-            </Route>
+          <Route path="staff" element={<Layout />}>
+            {staffRoutes.map((route, index) => {
+              const Page = route.component;
+              return <Route key={index} path={route.path} element={<Page />} />;
+            })}
+          </Route>
           {/* ) */}
-          {/* } */}
         </Routes>
       </Router>
     </>

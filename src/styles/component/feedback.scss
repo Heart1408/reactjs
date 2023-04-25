@@ -1,0 +1,104 @@
+.feedback {
+  .title {
+    font-size: 18px;
+    font-weight: 500;
+    padding-bottom: 5px;
+  }
+
+  .form-search {
+    background-color: rgb(228, 228, 223);
+    margin-top: 20px;
+    margin-bottom: 0;
+  }
+
+  .list-feedback {
+    width: 100%;
+    padding: 20px 30px 20px 0;
+
+    .item {
+      border: 1px solid $border-color;
+      border-radius: 5px;
+      padding: 10px;
+      margin-bottom: 5px;
+      box-shadow: 1px 1px 2px 2px $border-color;
+    }
+
+    .overview {
+      border-bottom: 2px solid $border-color;
+      padding-bottom: 8px;
+
+      .status {
+        display: flex;
+        justify-content: end;
+        margin-right: 10%;
+      }
+
+      .ant-avatar {
+        width: 26px;
+        height: 26px;
+        font-size: 15px;
+        margin-right: 5px;
+      }
+
+      .ant-btn {
+        height: 28px;
+        padding: 5px 15px;
+        line-height: 16px;
+      }
+    }
+
+    .rate {
+      display: flex;
+      align-items: center;
+
+      p {
+        font-size: 15px;
+        font-weight: 500;
+        padding-right: 5px;
+      }
+
+      .ant-rate .ant-rate-star:not(:last-child) {
+        margin-inline-end: 3px;
+      }
+    }
+  }
+
+  .statistic {
+    border: 2px solid $border-color;
+    border-radius: 5px;
+    margin: 20px 0;
+    text-align: center;
+
+    .title {
+      font-size: 17px;
+      background-color: $border-color;
+      padding: 10px;
+    }
+    
+    .total-rate {
+      margin-top: 20px;
+      font-size: 16px;
+      font-weight: 500;
+    }
+
+    .ant-divider-with-text {
+      margin-bottom: 5px;
+    }
+
+    .rate {
+      padding-bottom: 20px;
+
+      .ant-rate {
+        font-size: 18px;
+      }
+
+      .ant-rate .ant-rate-star:not(:last-child) {
+        margin-inline-end: 5px;
+      }
+
+      p {
+        font-size: 15px;
+      }
+    }
+  }
+}

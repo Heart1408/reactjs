@@ -1,6 +1,5 @@
 import React, { useContext } from "react";
-import { Button, Space, Select, Modal, Input, Form } from "antd";
-import "./permission.scss";
+import { Button, Select, Modal, Input, Form } from "antd";
 import { PermissionContext } from "../../../pages/Staff/StaffManagement";
 
 const PermissionModal = () => {
@@ -36,7 +35,7 @@ const PermissionModal = () => {
   return (
     <>
       <Modal
-        title="Thêm mới nhân viên"
+        title={<p className="model-header">Thêm nhân viên mới</p>}
         open={isAddStaffModalOpen}
         onCancel={handleAddStaffCancel}
         footer={[]}
@@ -46,10 +45,7 @@ const PermissionModal = () => {
             span: 7,
           }}
           wrapperCol={{
-            span: 16,
-          }}
-          style={{
-            maxWidth: 600,
+            span: 17,
           }}
           onFinish={onSubmitShift}
           onFinishFailed={onSubmitShiftFailed}
@@ -69,6 +65,19 @@ const PermissionModal = () => {
           </Form.Item>
 
           <Form.Item
+            label="Số điện thoại"
+            name="phone"
+            rules={[
+              {
+                required: true,
+                message: "Không được để trống!",
+              },
+            ]}
+          >
+            <Input placeholder="Nhập số điện thoại" />
+          </Form.Item>
+
+          <Form.Item
             label="Email"
             name="email"
             rules={[
@@ -76,30 +85,13 @@ const PermissionModal = () => {
                 type: "email",
                 message: "Email không hợp lệ!",
               },
-              {
-                required: true,
-                message: "Không được để trống!",
-              },
             ]}
           >
-            <Input placeholder="Nhập email ..." />
+            <Input placeholder="Nhập email" />
           </Form.Item>
 
-          <Form.Item label="Số điện thoại" name="phone">
-            <Input placeholder="Nhập số điện thoại ..." />
-          </Form.Item>
-
-          <Form.Item
-            label="Họ và tên"
-            name="fullname"
-            rules={[
-              {
-                required: true,
-                message: "Không được để trống!",
-              },
-            ]}
-          >
-            <Input placeholder="Họ và tên" />
+          <Form.Item label="Họ và tên" name="fullname">
+            <Input placeholder="Nhập họ và tên" />
           </Form.Item>
 
           <Form.Item
@@ -113,7 +105,7 @@ const PermissionModal = () => {
             ]}
             hasFeedback
           >
-            <Input.Password placeholder="" />
+            <Input.Password placeholder="Nhập mật khẩu" />
           </Form.Item>
 
           <Form.Item
@@ -138,7 +130,7 @@ const PermissionModal = () => {
               }),
             ]}
           >
-            <Input.Password />
+            <Input.Password placeholder="Nhập mật khẩu" />
           </Form.Item>
 
           <Form.Item
@@ -152,7 +144,7 @@ const PermissionModal = () => {
             ]}
           >
             <Select
-              placeholder="Họ và tên"
+              placeholder="--Vị trí làm việc--"
               style={{
                 width: 160,
               }}
@@ -170,7 +162,7 @@ const PermissionModal = () => {
           </Form.Item>
           <Form.Item {...tailFormItemLayout}>
             <Button type="primary" htmlType="submit">
-              Submit
+              Thêm
             </Button>
           </Form.Item>
         </Form>

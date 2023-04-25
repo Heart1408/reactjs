@@ -78,12 +78,11 @@ function AddShift(props) {
   };
 
   const disabledDate = (current) => {
-    // Can not select days before today and today
-    return current && current < dayjs().endOf("day");
+    return current && current < dayjs().startOf("day");
   };
 
   const disabledDateTime = () => ({
-    disabledHours: () => range(0, 24).splice(4, 20),
+    disabledHours: () => range(0, 24).splice(8, 22),
     disabledMinutes: () => range(30, 60),
     disabledSeconds: () => [55, 56],
   });
