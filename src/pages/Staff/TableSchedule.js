@@ -8,7 +8,7 @@ import ScheduleItem from "../../components/Staff/Order/Schedule/Item";
 import AddShift from "../../components/Staff/Order/Schedule/AddShift";
 import { STATUS_TABLE_COLOR } from "../../constants";
 import Layout from "../../components/Staff/Order/Layout";
-import { Button, Select, Table, Row, Tabs } from "antd";
+import { Button, Select, Table, Row, Tabs, Alert, Space } from "antd";
 import { format } from "date-fns";
 
 function TableSchedule() {
@@ -55,8 +55,6 @@ function TableSchedule() {
     handleGetFloor();
     handleGetListSchedule();
   }, [selectedDate]);
-
-  console.log(listSchedule);
 
   useEffect(() => {
     const handleGetListTable = async () => {

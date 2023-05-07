@@ -64,15 +64,19 @@
       }
 
       .total-price {
-        .btn {
-          display: flex;
-          justify-content: end;
-          margin-top: 5px;
-        }
-
         p {
           font-size: 16px;
           font-weight: bolder;
+        }
+        
+        .is-paid {
+          font-size: 15px;
+          font-style: italic;
+          text-align: center;
+          margin-top: 5px;
+          border-radius: 5px;
+          text-decoration: underline;
+          cursor: pointer;
         }
       }
     }
@@ -159,13 +163,13 @@
     color: orangered!important;
   }
 
-  button {
-    border: none;
-    padding: 5px 15px;
+  .ant-btn {
+    padding: 5px 18px;
     border-radius: 5px;
-    cursor: pointer;
-    background-color: $primary-color;
-    color: white;
-    margin-top: 5px;
+    margin-top: 8px;
+  }
+
+  .active-btn {
+    background-color: $primary-color
   }
 }

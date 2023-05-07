@@ -9,7 +9,7 @@ import { handleLogout } from "../../redux/login/slice";
 import Logo from "../../components/Logo";
 
 import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
-import { Layout, theme, Row, Col } from "antd";
+import { Layout, theme, Row, Col, Space } from "antd";
 
 const { Header, Content } = Layout;
 
@@ -36,6 +36,34 @@ function Layouts() {
   return (
     isLogin && (
       <Layout>
+        <Space
+          direction="vertical"
+          style={{
+            width: "100%",
+            position: "fixed",
+            top: "50px",
+            left: "490px",
+            zIndex: "1000",
+          }}
+        >
+          {/* <Alert
+            message="Cập nhật thành công"
+            type="success"
+            showIcon
+            style={{
+              width: "300px",
+            }}
+          /> */}
+          {/* <Alert
+            message="Chưa thể cập nhật trạng thái bàn."
+            type="error"
+            style={{
+              width: "300px",
+              zIndex: "1000",
+            }}
+            showIcon
+          /> */}
+        </Space>
         <Sidebar collapsed={collapsed} />
         <Layout className="site-layout">
           <Header style={{ padding: 0, background: colorBgContainer }}>

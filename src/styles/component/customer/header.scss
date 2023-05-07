@@ -1,5 +1,3 @@
-$navy: rgb(19, 19, 57);
-
 .header {
   position: relative;
   display: flex;
@@ -19,7 +17,7 @@ $navy: rgb(19, 19, 57);
   .menu {
     display: flex;
     align-items: center;
-    margin-top: 0px;
+    // margin-top: 0px;
 
     a {
       text-decoration: none;

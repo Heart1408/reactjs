@@ -1,19 +1,20 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  authenticationToken: '',
+  authenticationToken: "",
+  confirmCustomerToken: "",
   currentUser: {},
 };
 
 export const AuthenticationSlice = createSlice({
-  name: 'authentication',
+  name: "authentication",
   initialState,
   reducers: {
     handleLoginRequest: (state, action) => {
-      console.log('hahaha')
-      return ({
-      ...state,
-    })},
+      return {
+        ...state,
+      };
+    },
     handleLoginResponse: (state, action) => {
       const { user_info, token } = action.payload;
       return {
@@ -25,19 +26,33 @@ export const AuthenticationSlice = createSlice({
         },
       };
     },
+    handleConfirmCustomerRequest: (state, action) => {
+      return {
+        ...state,
+      };
+    },
+    handleConfirmCustomerResponse: (state, action) => {
+      const { token } = action.payload;
+      return {
+        ...state,
+        confirmCustomerToken: token,
+      };
+    },
     handleLogout: (state, action) => ({
-      authenticationToken: '',
-        currentUser: {},
+      authenticationToken: "",
+      currentUser: {},
     }),
   },
 });
 
-export const { 
-  handleLoginRequest, 
+export const {
+  handleLoginRequest,
   handleLoginResponse,
+  handleConfirmCustomerRequest,
+  handleConfirmCustomerResponse,
   handleLogout,
 } = AuthenticationSlice.actions;
 
-export const namespace = 'AuthenticationSlice';
+export const namespace = "AuthenticationSlice";
 
 export default AuthenticationSlice.reducer;

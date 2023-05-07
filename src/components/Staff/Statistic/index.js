@@ -32,11 +32,6 @@ const items = [
   },
 ];
 
-const menuProps = {
-  items,
-  onClick: handleMenuClick,
-};
-
 const Statistics = () => {
   return (
     <>
@@ -151,7 +146,7 @@ const Statistics = () => {
           </Col>
         </Row>
       </div>
-      <div>
+      {/* <div>
         <Row justify={"space-between"}>
           <p>Doanh thu, chi phí, lợi nhuận</p>
           <Dropdown menu={menuProps}>
@@ -163,7 +158,7 @@ const Statistics = () => {
             </Button>
           </Dropdown>
         </Row>
-      </div>
+      </div> */}
     </>
   );
 };

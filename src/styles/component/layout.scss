@@ -114,6 +114,11 @@
     margin: 8px 10px 2px 0;
     font-size: 17px;
 
+    .paid-text {
+      text-align: center;
+      color: $red;
+    }
+
     span {
       font-weight: bolder;
       padding-left: 5px;
@@ -152,17 +157,36 @@ img {
     border: 2px solid rgb(204, 203, 203);
     min-height: 480px;
     display: flex;
-    align-items: center;
     border-radius: 4px;
 
     p {
       font-size: 15px;
       font-weight: 500;
     }
+
+    .note {
+      background-color: rgb(248, 236, 198);
+      border: 1px solid rgb(218, 197, 130);
+      border-radius: 2px;
+      margin: 0;
+      margin-top: 10px;
+      width: 98%;
+
+      svg {
+        margin: 5px 8px 0 12px;
+      }
+    }
+
+    .total-p {
+      display: flex;
+      justify-content: end;
+    }
   
     .no-data {
       width: 100%;
-      text-align: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
       color:rgb(224, 223, 223);
   
       svg {

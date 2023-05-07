@@ -7,6 +7,7 @@ export default function Customer() {
     {
       name: "Ant",
       phone: "0378933888",
+      backgound: "#cdcecf",
     },
     {
       name: "Ant Design ",
@@ -18,6 +19,26 @@ export default function Customer() {
     },
     {
       name: "Ant Design Title 4",
+      phone: "035933999",
+    },
+  ];
+
+  const data2 = [
+    {
+      date: "20/04/2023",
+      totalPrice: "500.000đ",
+    },
+    {
+      date: "18/04/2023",
+      totalPrice: "1.000.000đ",
+    },
+    {
+      date: "17/04/2023",
+      totalPrice: "820.000đ",
+    },
+    {
+      date: "15/04/2023",
+      totalPrice: "200.000đ",
     },
   ];
 
@@ -42,7 +63,7 @@ export default function Customer() {
               }}
               dataSource={data}
               renderItem={(item, index) => (
-                <List.Item key={index}>
+                <List.Item key={index} style={{ background: item.backgound }}>
                   <Row className="item">
                     <Col flex="2">
                       <Space>
@@ -65,7 +86,7 @@ export default function Customer() {
           <p className="title">Thông tin đặt bàn</p>
           <div className="statistic">
             <p className="customer-name">Khách hàng: Ant</p>
-            <p>Số lần đặt lịch: 5</p>
+            <p>Số lần đặt lịch: 4</p>
             <p className="success">
               <TagFilled />
               Thành công: 4
@@ -78,12 +99,12 @@ export default function Customer() {
           <List
             className="details"
             itemLayout="horizontal"
-            dataSource={data}
+            dataSource={data2}
             renderItem={(item, index) => (
               <List.Item key={index}>
                 <Row className="item">
-                  <Col flex="3">Ngày 1/1/2021 23:00</Col>
-                  <Col flex="3">Tổng hóa đơn: 2.000.000đ</Col>
+                  <Col flex="3">Ngày {item.date}</Col>
+                  <Col flex="3">Tổng hóa đơn: {item.totalPrice}</Col>
                   <Col flex="2" className="status">
                     <p style={{ background: "green" }}>Thành công</p>
                   </Col>

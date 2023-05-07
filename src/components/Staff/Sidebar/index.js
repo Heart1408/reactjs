@@ -94,15 +94,15 @@ function Sidebar(props) {
         </NavLink>
       ),
     },
-    {
-      key: "7",
-      label: (
-        <NavLink to="#" className="list-group-item">
-          <FontAwesomeIcon icon={faMapLocation} size="lg" />
-          <span className={`nav-text ${hiddenClass}`}>Map</span>
-        </NavLink>
-      ),
-    },
+    // {
+    //   key: "7",
+    //   label: (
+    //     <NavLink to="#" className="list-group-item">
+    //       <FontAwesomeIcon icon={faMapLocation} size="lg" />
+    //       <span className={`nav-text ${hiddenClass}`}>Map</span>
+    //     </NavLink>
+    //   ),
+    // },
     {
       key: "8",
       label: (

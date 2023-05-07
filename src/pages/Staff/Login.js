@@ -24,7 +24,6 @@ const Login = () => {
       password: Yup.string().required("Mật khẩu là bắt buộc!"),
     }),
     onSubmit: (values) => {
-      console.log(" hsdnm,s,");
       dispatch(
         handleLoginRequest({
           data: values,

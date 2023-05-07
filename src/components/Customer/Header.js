@@ -1,7 +1,6 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
 import Logo from "../Logo";
-import {} from "antd";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUtensils, faBurger } from "@fortawesome/free-solid-svg-icons";
 

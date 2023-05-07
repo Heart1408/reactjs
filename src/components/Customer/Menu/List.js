@@ -1,6 +1,10 @@
-import React, { useContext, useRef } from "react";
+import React, { useContext, useRef, useState } from "react";
+import { DISH_STATUS } from "../../../constants";
+import { useGetListProduct, useGetListCategory } from "../../../hooks/category";
+import { useAddDishToMenu } from "../../../hooks/customer/booking";
+import { CustomerContext } from "../../../pages/Customer/Layout";
 import { UndoOutlined } from "@ant-design/icons";
-import { Select, Input, Button, List, Divider } from "antd";
+import { Select, Input, Button, List, Divider, message } from "antd";
 import styled from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -8,19 +12,6 @@ import {
   faAngleRight,
   faUtensils,
 } from "@fortawesome/free-solid-svg-icons";
-
-const images = [
-  "/images/food1.png",
-  "/images/food2.png",
-  "/images/drink1.png",
-  "/images/drink2.png",
-  "/images/drink3.png",
-  "/images/food2.png",
-  "/images/drink1.png",
-  "/images/drink2.png",
-  "/images/food1.png",
-  "/images/food2.png",
-];
 
 function SmoothHorizontalScrolling(e, time, amount, start) {
   var eAmt = amount / 100;
@@ -40,12 +31,70 @@ function SHS_B(e, sc, eAmt, start, y) {
 }
 
 function Menu() {
+  const { onShowConfirmCustomerModel, confirmCus } =
+    useContext(CustomerContext);
+
+  const [queryParams, setQueryParams] = useState({
+    search_key: "",
+    sortByPrice: null,
+    categoryId: null,
+    status: null,
+  });
+
+  const handleResponse = (isSuccess, success = null, error = null) => {
+    if (isSuccess) {
+      message.success(success);
+      return;
+    }
+    message.error(error || "Có lỗi xảy ra");
+  };
+
+  const { data: dataCategoryResponse } = useGetListCategory();
+  const { data: dataNewProductResponse } = useGetListProduct({
+    status: DISH_STATUS.NEW,
+  });
+  const { data: dataProductResponse } = useGetListProduct(queryParams);
+  const addDishsToMenu = useAddDishToMenu(handleResponse);
+
+  const listCategory = dataCategoryResponse?.data;
+  const newProduct = dataNewProductResponse?.data;
+  const listProduct = dataProductResponse?.data;
+
+  const addDish = (dish) => {
+    if (!confirmCus) onShowConfirmCustomerModel();
+    else {
+      console.log(dish.id);
+      addDishsToMenu.mutate(dish.id);
+    }
+  };
+
+  const sortByPrice = (value) => {
+    setQueryParams({
+      ...queryParams,
+      sortByPrice: value,
+    });
+  };
+
+  const onChangeKeyword = (keyword) => {
+    setQueryParams({
+      ...queryParams,
+      search_key: keyword,
+    });
+  };
+
+  const resetFilter = () => {
+    setQueryParams({
+      ...queryParams,
+      sortByPrice: null,
+      search_key: null,
+    });
+  };
+
   const sliderRef = useRef();
   const itemRef = useRef();
   const handleScrollRight = () => {
     const maxScrollLeft =
       sliderRef.current.scrollWidth - sliderRef.current.clientWidth;
-    // console.log(maxScrollLeft);
     if (sliderRef.current.scrollLeft < maxScrollLeft) {
       SmoothHorizontalScrolling(
         sliderRef.current,
@@ -66,33 +115,28 @@ function Menu() {
     }
   };
 
-  const list_product = [];
-  for (let i = 1; i < 9; i++) {
-    list_product.push({
-      key: i,
-      image: "/images/drink.jpg",
-    });
-  }
-
   return (
     <div className="menu-page">
       <div>
         <Slider>
           <p className="menu-title">Món mới</p>
-          <Item ref={sliderRef}>
-            {images.map((image, index) => (
+          <Item ref={sliderRef} length={newProduct ? newProduct.length : 0}>
+            {newProduct?.map((item, index) => (
               <div key={index} className="item" ref={itemRef}>
                 <div class="booking-btn">
-                  <button>
+                  <button onClick={() => addDish(item)}>
                     <FontAwesomeIcon icon={faUtensils} />
                   </button>
                 </div>
                 <div className="img">
-                  <img alt="image-food" src={image}></img>
+                  <img
+                    alt="image-food"
+                    src={`http://localhost:8000${item.image}`}
+                  ></img>
                 </div>
                 <div className="info">
-                  <p className="name">Name</p>
-                  <p className="price">100.000d</p>
+                  <p className="name">{item.name}</p>
+                  <p className="price">{item.price}đ</p>
                 </div>
               </div>
             ))}
@@ -114,17 +158,12 @@ function Menu() {
         </div>
         <div className="search">
           <Select
-            placeholder="--Danh mục--"
-            options={[
-              {
-                value: 1,
-                label: "Đồ uống",
-              },
-              {
-                value: 2,
-                label: "Món chính",
-              },
-            ]}
+            placeholder="--Chọn món--"
+            defaultValue={listCategory ? listCategory[0].id : null}
+            options={listCategory?.map((item) => ({
+              value: item.id,
+              label: item.type,
+            }))}
           />
           <Select
             placeholder="--Giá--"
@@ -138,9 +177,19 @@ function Menu() {
                 label: "Giá giảm dần",
               },
             ]}
+            onChange={(e) => sortByPrice(e)}
+            value={queryParams["sortByPrice"]}
           />
-          <Input placeholder="Tìm kiếm ..."></Input>
-          <Button type="primary" icon={<UndoOutlined />}></Button>
+          <Input
+            placeholder="Tìm kiếm ..."
+            onChange={(e) => onChangeKeyword(e.target.value)}
+            value={queryParams["search_key"]}
+          ></Input>
+          <Button
+            onClick={() => resetFilter()}
+            type="primary"
+            icon={<UndoOutlined />}
+          ></Button>
         </div>
         <div className="list-product">
           <List
@@ -159,21 +208,24 @@ function Menu() {
               pageSize: 10,
               align: "center",
             }}
-            dataSource={list_product}
+            dataSource={listProduct}
             renderItem={(item) => (
               <List.Item>
                 <div className="item">
                   <div class="booking-btn">
-                    <button>
+                    <button onClick={() => addDish(item)}>
                       <FontAwesomeIcon icon={faUtensils} />
                     </button>
                   </div>
                   <div className="img">
-                    <img alt="image-food" src={item.image}></img>
+                    <img
+                      alt="image-food"
+                      src={`http://localhost:8000${item.image}`}
+                    ></img>
                   </div>
                   <div className="info">
-                    <p className="name">Nước ép cam</p>
-                    <p className="price">40.000đ</p>
+                    <p className="name">{item.name}</p>
+                    <p className="price">{item.price}đ</p>
                   </div>
                 </div>
               </List.Item>
@@ -227,7 +279,8 @@ const Slider = styled.div`
 
 const Item = styled.div`
   display: grid;
-  grid-template-columns: repeat(${images.length}, 200px);
+  grid-template-columns: repeat(${(props) => props.length}, 200px);
+  // grid-template-columns: repeat(50, 200px);
   gap: 10px;
   transition: all 0.3s linear;
   overflow-y: hidden;

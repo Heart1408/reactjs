@@ -1,15 +1,16 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { DISH_STATUS } from "../../../constants";
 import {
   useCreateCategory,
   useGetListCategory,
   useUpdateCategory,
   useDeleteCategory,
+  useGetListProduct,
 } from "../../../hooks/category";
 import { useFormik } from "formik";
 import AddProduct from "./AddProduct";
 import {
-  SearchOutlined,
-  FormOutlined,
+  UndoOutlined,
   EditOutlined,
   ExclamationCircleOutlined,
   DeleteOutlined,
@@ -109,17 +110,79 @@ function Menu() {
       },
     });
   };
+  // ------------------------------------------------------------------------------
+  const [queryParams, setQueryParams] = useState({
+    search_key: "",
+    sortByPrice: null,
+    categoryId: null,
+    status: null,
+  });
 
-  const data = [];
-  for (let i = 1; i < 20; i++) {
-    data.push({
-      key: i,
-      image: "/images/drink.jpg",
-      product_name: `Name name ${i}`,
-      price: `10${i}.000`,
-      edit: <Button type="primary" icon={<FormOutlined />} ghost />,
+  const [categoryActive, setCategoryActive] = useState({
+    id: "2",
+    name: "Món chính",
+  });
+  const [active, setActive] = useState("#95bcf3");
+
+  const handleItemClick = (category) => {
+    if (category.id === 2) setActive("#95bcf3");
+    else setActive("unset");
+    setCategoryActive({
+      id: category.id,
+      name: category.type,
     });
-  }
+    setQueryParams({ ...queryParams, categoryId: category.id, status: null });
+  };
+
+  const handleDishSatusClick = (status) => {
+    setQueryParams({
+      ...queryParams,
+      categoryId: null,
+      status: status,
+    });
+
+    setCategoryActive({
+      name: status === 1 ? "Sản phẩm mới" : "Sản phẩm tạm hết",
+    });
+  };
+
+  const onChangeKeyword = (keyword) => {
+    setQueryParams({
+      ...queryParams,
+      search_key: keyword,
+    });
+  };
+
+  const sortByPrice = (value) => {
+    setQueryParams({
+      ...queryParams,
+      sortByPrice: value,
+    });
+  };
+
+  const resetFilter = () => {
+    setQueryParams({
+      ...queryParams,
+      sortByPrice: null,
+      search_key: null,
+    });
+  };
+
+  const {
+    data: dataProductResponse,
+    isLoading: loading,
+    isError: getListFail,
+    error,
+    isSuccess,
+  } = useGetListProduct(queryParams);
+
+  const listProduct = dataProductResponse?.data;
+
+  useEffect(() => {
+    if (getListFail) {
+      message.error(error);
+    }
+  }, [getListFail]);
 
   return (
     <>
@@ -128,7 +191,18 @@ function Menu() {
           <List>
             <p className="title">Danh mục sản phẩm</p>
             {listCategory?.map((item) => (
-              <List.Item key={item.id}>
+              <List.Item
+                key={item.id}
+                onClick={() => handleItemClick(item)}
+                style={{
+                  backgroundColor:
+                    item.id === 2
+                      ? active
+                      : categoryActive["id"] === item.id
+                      ? "#95bcf3"
+                      : "",
+                }}
+              >
                 <Row justify="space-between">
                   <Space>
                     <FontAwesomeIcon icon={faBowlFood} />
@@ -151,7 +225,14 @@ function Menu() {
                 </Row>
               </List.Item>
             ))}
-            <List.Item className="product-new">
+            <List.Item
+              className="product-new"
+              onClick={() => handleDishSatusClick(DISH_STATUS.NEW)}
+              style={{
+                backgroundColor:
+                  queryParams["status"] === DISH_STATUS.NEW ? "#95bcf3" : "",
+              }}
+            >
               <Row justify="space-between">
                 <Space>
                   <FontAwesomeIcon icon={faNoteSticky} />
@@ -159,7 +240,16 @@ function Menu() {
                 </Space>
               </Row>
             </List.Item>
-            <List.Item className="product-outofstock">
+            <List.Item
+              className="product-outofstock"
+              onClick={() => handleDishSatusClick(DISH_STATUS.OUT_OF_STOCK)}
+              style={{
+                backgroundColor:
+                  queryParams["status"] === DISH_STATUS.OUT_OF_STOCK
+                    ? "#95bcf3"
+                    : "",
+              }}
+            >
               <Row justify="space-between">
                 <Space>
                   <FontAwesomeIcon icon={faNoteSticky} />
@@ -223,14 +313,18 @@ function Menu() {
           <p className="title">Danh sách sản phẩm </p>
           <p style={{ fontStyle: "italic", fontSize: "16px", margin: "5px 0" }}>
             {" "}
-            Danh mục Đồ uống
+            Danh mục {categoryActive["name"]}
           </p>
           <Row className="form-search" justify="space-between">
             <Col>
               <Space>
-                <Input placeholder="Nhập ..."></Input>
+                <Input
+                  placeholder="Nhập ..."
+                  onChange={(e) => onChangeKeyword(e.target.value)}
+                  value={queryParams["search_key"]}
+                ></Input>
                 <Select
-                  defaultValue="--Giá--"
+                  placeholder="--Giá--"
                   style={{
                     width: 120,
                   }}
@@ -244,12 +338,18 @@ function Menu() {
                       label: "Giảm dần",
                     },
                   ]}
+                  onChange={(e) => sortByPrice(e)}
+                  value={queryParams["sortByPrice"]}
                 />
-                <Button type="primary" icon={<SearchOutlined />}></Button>
+                <Button
+                  onClick={() => resetFilter()}
+                  type="primary"
+                  icon={<UndoOutlined />}
+                ></Button>
               </Space>
             </Col>
             <Col>
-              <AddProduct />
+              <AddProduct listCategory={listCategory ? listCategory : null} />
             </Col>
           </Row>
           <List
@@ -269,20 +369,27 @@ function Menu() {
               },
               pageSize: 10,
             }}
-            dataSource={data}
+            dataSource={listProduct}
             renderItem={(item) => (
               <List.Item>
-                <Card cover={<img alt="img" src={item.image} />}>
+                <Card
+                  cover={
+                    <img
+                      alt={item.image}
+                      src={`http://localhost:8000${item.image}`}
+                    />
+                  }
+                >
                   <Meta
                     title={
                       <Row justify="space-between">
-                        <p className="product-name">{item.product_name}</p>
+                        <p className="product-name">{item.name}</p>
                         <Row>
                           <button
                             onClick={(e) => {
                               e.preventDefault();
                               setIsDeleteProduct(true);
-                              confirmDelete(item.key);
+                              confirmDelete(item.id);
                             }}
                           >
                             <DeleteOutlined />

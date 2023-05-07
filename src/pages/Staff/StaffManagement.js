@@ -1,12 +1,10 @@
 import React, { createContext, useState } from "react";
-// import ShiftManager from "../../components/Staff/StaffManager/ShiftManager";
 import StaffManager from "../../components/Staff/StaffManager";
 import AddStaffModal from "../../components/Staff/StaffManager/AddStaffModal";
 
 export const PermissionContext = createContext();
 
 const StaffManagement = () => {
-
   const [isAddStaffModalOpen, setIsAddStaffModalOpen] = useState(false);
 
   const showAddStaffModal = () => {

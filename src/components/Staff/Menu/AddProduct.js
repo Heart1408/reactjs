@@ -1,5 +1,7 @@
 import React, { useState } from "react";
-import { PlusOutlined, FormOutlined, LoadingOutlined } from "@ant-design/icons";
+import { useCreateProduct } from "../../../hooks/category";
+import { useFormik } from "formik";
+import { PlusOutlined, FormOutlined } from "@ant-design/icons";
 import {
   Button,
   Select,
@@ -7,29 +9,13 @@ import {
   Modal,
   Form,
   Input,
-  Upload,
   message,
-  Row,
+  Image,
 } from "antd";
-//uplaod ảnh
-const getBase64 = (img, callback) => {
-  const reader = new FileReader();
-  reader.addEventListener("load", () => callback(reader.result));
-  reader.readAsDataURL(img);
-};
-const beforeUpload = (file) => {
-  const isJpgOrPng = file.type === "image/jpeg" || file.type === "image/png";
-  if (!isJpgOrPng) {
-    message.error("You can only upload JPG/PNG file!");
-  }
-  const isLt2M = file.size / 1024 / 1024 < 2;
-  if (!isLt2M) {
-    message.error("Image must smaller than 2MB!");
-  }
-  return isJpgOrPng && isLt2M;
-};
 
-function AddProduct() {
+function AddProduct(props) {
+  const { listCategory } = props;
+
   const data = [];
   for (let i = 1; i < 20; i++) {
     data.push({
@@ -46,47 +32,64 @@ function AddProduct() {
     setIsModalOpen(true);
   };
 
-  const handleCancel = () => {
-    setIsModalOpen(false);
-  };
-
-  const onSubmitShift = (values) => {
-    console.log("Success:", values);
-    setIsModalOpen(false);
-  };
-
-  const onSubmitShiftFailed = (errorInfo) => {
-    console.log("Failed:", errorInfo);
-  };
-
-  //upload ảnh
-  const [loading, setLoading] = useState(false);
-  const [imageUrl, setImageUrl] = useState();
-  const handleChange = (info) => {
-    if (info.file.status === "uploading") {
-      setLoading(true);
+  const handleResponse = (isSuccess, success = null, error = null) => {
+    if (isSuccess) {
+      message.success(success);
+      handleCancel();
+      // refetch();
       return;
     }
-    if (info.file.status === "done") {
-      // Get this url from response in real world.
-      getBase64(info.file.originFileObj, (url) => {
-        setLoading(false);
-        setImageUrl(url);
-      });
-    }
+    message.error(error || "Có lỗi xảy ra");
   };
-  const uploadButton = (
-    <div>
-      {loading ? <LoadingOutlined /> : <PlusOutlined />}
-      <div
-        style={{
-          marginTop: 8,
-        }}
-      >
-        Upload
-      </div>
-    </div>
-  );
+
+  const mutateCreateProduct = useCreateProduct(handleResponse);
+  const [initialValues, setInitialValues] = useState({
+    name: "",
+    dish_type: null,
+    price: "",
+    image: null,
+    status: null,
+  });
+
+  //upload ảnh
+  const getBase64 = (img, callback) => {
+    const reader = new FileReader();
+    reader.addEventListener("load", () => callback(reader.result));
+    reader.readAsDataURL(img);
+  };
+
+  const [featureImage, setFeatureImage] = useState({});
+  const handleSetFeatureImage = (base64) => {
+    setFeatureImage((prevState) => ({
+      ...prevState,
+      image: base64,
+    }));
+  };
+
+  const formik = useFormik({
+    initialValues: initialValues,
+    enableReinitialize: true,
+    onSubmit: (values) => {
+      const formData = new FormData();
+      for (const key in values) {
+        if (values[key]) {
+          formData.append(key, values[key]);
+        }
+      }
+      mutateCreateProduct.mutate(formData);
+    },
+  });
+
+  const handleUploadFile = (e) => {
+    const image = e.target.files[0];
+    formik.setFieldValue("image", image);
+    getBase64(image, handleSetFeatureImage);
+  };
+
+  const handleCancel = () => {
+    formik.resetForm();
+    setIsModalOpen(false);
+  };
 
   return (
     <div className="add-product">
@@ -105,15 +108,13 @@ function AddProduct() {
           wrapperCol={{
             span: 16,
           }}
-          onFinish={onSubmitShift}
-          onFinishFailed={onSubmitShiftFailed}
+          onFinish={formik.handleSubmit}
           autoComplete="off"
           layout="vertical"
         >
           <Space>
             <Form.Item
               label="Tên sản phẩm"
-              name="productname"
               rules={[
                 {
                   required: true,
@@ -125,13 +126,15 @@ function AddProduct() {
                 style={{
                   width: 260,
                 }}
+                name="name"
                 placeholder="N..."
+                onChange={formik.handleChange}
+                value={formik.values.name}
               ></Input>
             </Form.Item>
 
             <Form.Item
               label="Danh mục"
-              name=""
               rules={[
                 {
                   required: true,
@@ -140,59 +143,53 @@ function AddProduct() {
               ]}
             >
               <Select
-                defaultValue="2"
+                placeholder="--Chọn danh mục--"
                 style={{
                   width: 160,
                 }}
-                options={[
-                  {
-                    value: "1",
-                    label: "Đồ uống",
-                  },
-                  {
-                    value: "2",
-                    label: "Tráng miệng",
-                  },
-                ]}
+                name="dish_type"
+                options={listCategory?.map((item) => ({
+                  value: item.id,
+                  label: item.type,
+                }))}
+                onChange={(e) => {
+                  formik.setFieldValue("dish_type", e);
+                }}
+                value={formik.values.dish_type}
               />
             </Form.Item>
           </Space>
 
           <Space>
-            <Form.Item
-              label="Trạng thái"
-              name="status"
-              rules={[
-                {
-                  required: true,
-                  message: "Không được để trống!",
-                },
-              ]}
-            >
+            <Form.Item label="Trạng thái">
               <Select
-                defaultValue="1"
+                name="status"
                 style={{
                   width: 260,
                 }}
                 options={[
                   {
-                    value: "1",
+                    value: null,
                     label: "--None--",
                   },
                   {
-                    value: "2",
+                    value: 1,
                     label: "Sản phẩm mới",
                   },
                   {
-                    value: "3",
+                    value: 2,
                     label: "Sản phẩm tạm hết",
                   },
                 ]}
+                onChange={(e) => {
+                  console.log("sa", e);
+                  formik.setFieldValue("status", e);
+                }}
+                value={formik.values.status}
               />
             </Form.Item>
             <Form.Item
               label="Giá"
-              name="price"
               rules={[
                 {
                   required: true,
@@ -202,10 +199,13 @@ function AddProduct() {
             >
               <Input
                 type="number"
-                placeholder="10.000"
+                name="price"
+                placeholder="10000"
                 style={{
                   width: 160,
                 }}
+                onChange={formik.handleChange}
+                value={formik.values.price}
               ></Input>
             </Form.Item>
           </Space>
@@ -216,32 +216,18 @@ function AddProduct() {
                 <p>File hỗ trợ: JPG, PNG, SVG. Tối đa 5MB</p>
               </>
             }
-            name=""
-            rules={[
-              {
-                required: true,
-                message: "Không được để trống!",
-              },
-            ]}
           >
-            <Upload
-              name="avatar"
-              listType="picture-card"
-              className="avatar-uploader"
-              showUploadList={false}
-              action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-              beforeUpload={beforeUpload}
-              onChange={handleChange}
-              style={{
-                width: "100%",
-              }}
-            >
-              {imageUrl ? <img src={imageUrl} alt="avatar" /> : uploadButton}
-            </Upload>
+            <Image
+              className=""
+              name="image"
+              preview={false}
+              src={featureImage.image || formik.values.image}
+            />
+            <input type="file" multiple={false} onChange={handleUploadFile} />
           </Form.Item>
           <Form.Item>
             <Button type="primary" htmlType="submit">
-              Submit
+              Thêm
             </Button>
           </Form.Item>
         </Form>

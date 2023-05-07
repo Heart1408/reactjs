@@ -10,8 +10,8 @@ import Layout_Cus from "./pages/Customer/Layout";
 import "./App.scss";
 
 import { useSelector } from "react-redux";
-import CustomerAuthProvider from "./Context/CustomerAuthProvider";
-import ChatProvider from "./Context/ChatProvider";
+// import CustomerAuthProvider from "./Context/CustomerAuthProvider";
+// import ChatProvider from "./Context/ChatProvider";
 
 function App() {
   const staff = useSelector((state) => state?.staff?.staffInfo);

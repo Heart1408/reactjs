@@ -32,6 +32,7 @@ function AddShift(props) {
   const handleUpdateResponse = (isSuccess, success = null, error = null) => {
     if (isSuccess) {
       message.success(success);
+      handleCancel();
       return;
     }
     message.error(error || "Đã có lỗi xảy ra!");
@@ -50,19 +51,25 @@ function AddShift(props) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const showModal = () => {
     setIsModalOpen(true);
-    console.log("showModal");
   };
 
   const formik = useFormik({
     initialValues: initialValues,
     onSubmit: (values) => {
-      console.log("tét ", values);
       mutateCreateSchedule.mutate(values);
     },
   });
 
   const handleCancel = () => {
     setIsModalOpen(false);
+    formik.handleReset();
+    setInitialValues({
+      phone: null,
+      customername: null,
+      table_id: null,
+      time: null,
+      note: null,
+    });
   };
 
   const onSubmitShiftFailed = (errorInfo) => {
@@ -93,12 +100,13 @@ function AddShift(props) {
         Thêm mới đặt bàn
       </Button>
       <Modal
-        title="Thêm lịch đặt bàn"
+        title=""
         open={isModalOpen}
         onCancel={handleCancel}
         footer={[]}
         width={600}
       >
+        <p className="model-header">Thêm lịch đặt bàn</p>
         <FormStyle>
           <Form
             onFinish={formik.handleSubmit}
@@ -110,9 +118,17 @@ function AddShift(props) {
             style={{ maxWidth: 600 }}
             initialValues={{ remember: true }}
           >
-            <p>
+            <p
+              style={{
+                fontSize: "15px",
+                fontWeight: "500",
+                margin: "-5px 0 10px 0",
+              }}
+            >
               <FontAwesomeIcon icon={faUserTie} /> Nhân viên nhận đặt:{" "}
-              {currentStaff && currentStaff.username}
+              {/* {currentStaff && currentStaff.username}
+               */}
+              Tâm Vũ
             </p>
             <Space direction="vertical">
               <Space>
@@ -132,6 +148,9 @@ function AddShift(props) {
                     }
                   />
                 </Form.Item>
+                {formik.errors.phone && (
+                  <p className="pl-2 pt-1 text-danger">{formik.errors.phone}</p>
+                )}
                 <Form.Item label="Khách hàng: " name="customername">
                   <Input
                     onChange={(e) =>
@@ -172,10 +191,8 @@ function AddShift(props) {
                     </p>
                   ) : (
                     <Select
-                      // mode="multiple"
                       allowClear
-                      placeholder="Please select"
-                      // value={selectedTableId}
+                      placeholder="Chọn bàn"
                       options={listTable?.map((item) => ({
                         value: item.id,
                         label: item.name,
@@ -188,25 +205,8 @@ function AddShift(props) {
                   )}
                 </Form.Item>
               </Space>
+
               <Row>
-                <Form.Item
-                  label="Ghi chú: "
-                  rules={[
-                    {
-                      required: true,
-                      message: "Không được để trống!",
-                    },
-                  ]}
-                >
-                  <TextArea
-                    rows={3}
-                    onChange={(e) =>
-                      formik.setFieldValue("note", e.target.value)
-                    }
-                    // placeholder="maxLength is 6"
-                    // maxLength={6}
-                  />
-                </Form.Item>
                 <Form.Item
                   label="Thời gian: "
                   name="date"
@@ -216,10 +216,10 @@ function AddShift(props) {
                       message: "Không được để trống!",
                     },
                   ]}
-                  style={{ paddingLeft: "10px" }}
                 >
                   <DatePicker
                     format="YYYY-MM-DD HH:mm:ss"
+                    placeholder="Chọn thời gian"
                     disabledDate={disabledDate}
                     disabledTime={disabledDateTime}
                     onChange={(value) => {
@@ -231,12 +231,39 @@ function AddShift(props) {
                     }}
                   />
                 </Form.Item>
+
+                <Form.Item
+                  label="Ghi chú: "
+                  rules={[
+                    {
+                      required: true,
+                      message: "Không được để trống!",
+                    },
+                  ]}
+                  style={{ marginLeft: "10px" }}
+                >
+                  <TextArea
+                    rows={2}
+                    placeholder="Nhập ghi chú"
+                    onChange={(e) =>
+                      formik.setFieldValue("note", e.target.value)
+                    }
+                  />
+                </Form.Item>
               </Row>
             </Space>
 
             <Form.Item>
+              <Button
+                type="primary"
+                htmlType="reset"
+                onClick={handleCancel}
+                style={{ marginRight: "5px", background: "grey" }}
+              >
+                Hủy
+              </Button>
               <Button type="primary" htmlType="submit">
-                Submit
+                Thêm
               </Button>
             </Form.Item>
           </Form>

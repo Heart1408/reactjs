@@ -8,7 +8,7 @@ export default function Banner() {
           <img src="/images/chef.png"></img>
           <div>
             <p className="cus-name">
-              Xin chào, <span>Tâm</span> !
+              Xin chào, <span>Nguyễn Văn A</span> !
             </p>
             <p>Tham khảo menu tại nhà hàng chúng tôi.</p>
           </div>

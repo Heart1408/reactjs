@@ -5,9 +5,10 @@ import {
   getCustomerInfoAPI,
   createScheduleAPI,
   getTableStatusCurrentAPI,
+  updateStatusBillAPI,
+  paymentConfirmAPI,
 } from "../services/schedule";
 import { useMutation, useQuery } from "react-query";
-import { message } from "antd";
 
 export const useGetSchedule = (date) => {
   const handleGetListSchedule = async () => {
@@ -38,7 +39,6 @@ export const useGetFloor = () => {
     try {
       const response = await getFloorAPI();
       if (!response?.success) {
-      
         throw response?.message;
       }
       return response;
@@ -149,4 +149,54 @@ export const useGetTableCurrent = (table_id) => {
   );
 
   return useFetchTableCurrent;
+};
+
+export const useUpdateStatusBill = (callback) => {
+  const handleUpdateStatusBill = async (params) => {
+    try {
+      const response = await updateStatusBillAPI(params);
+      if (!response?.success) {
+        throw response?.message;
+      }
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  const useMutationUpdateStatusBill = useMutation(
+    ["updateStatusBill"],
+    handleUpdateStatusBill,
+    {
+      onSuccess: (res) => callback(true, res.message),
+      onError: (res) => callback(false, null, res),
+    }
+  );
+
+  return useMutationUpdateStatusBill;
+};
+
+export const usePaymentConfirm = (callback) => {
+  const handlePaymentConfirm = async (params) => {
+    try {
+      const response = await paymentConfirmAPI(params);
+      if (!response?.success) {
+        throw response?.message;
+      }
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  const useMutationPaymentConfirm = useMutation(
+    ["paymentConfirm"],
+    handlePaymentConfirm,
+    {
+      onSuccess: (res) => callback(true, res.message),
+      onError: (res) => callback(false, null, res),
+    }
+  );
+
+  return useMutationPaymentConfirm;
 };

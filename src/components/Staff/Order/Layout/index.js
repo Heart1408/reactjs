@@ -25,6 +25,10 @@ function Layout(props) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
+    if (props.listFloor[0]) setSelectedFloor(props.listFloor[0].id);
+  }, [props.listFloor]);
+
+  useEffect(() => {
     const handleGetListTable = async () => {
       try {
         const response = await getListTableAPI(selectedFloor);
@@ -56,7 +60,11 @@ function Layout(props) {
           <div>
             <Space wrap>
               <Select
-                defaultValue="Chọn tầng"
+                defaultValue={
+                  props.listFloor && props.listFloor.length > 0
+                    ? props.listFloor[0].id
+                    : "Tầng 1"
+                }
                 style={{ width: 120 }}
                 options={props.listFloor?.map((item) => ({
                   value: item.id,
@@ -98,86 +106,75 @@ function Layout(props) {
             </Row>
             <div className="layout-content">
               <Row>
-                {selectedFloor === null ? (
-                  <div style={{ width: "100%" }}>
-                    <Alert message="Vui lòng chọn tầng!" type="info" showIcon />
+                {listTable?.length === 0 ? (
+                  <div>
+                    Không có bàn nào!
+                    <Button type="primary">Thêm bàn mới</Button>
                   </div>
                 ) : (
                   <>
-                    {listTable.length === 0 ? (
-                      <div>
-                        Không có bàn nào!
-                        <Button type="primary">Thêm bàn mới</Button>
-                      </div>
-                    ) : (
-                      <>
-                        {listTable?.map((item) => (
-                          <Col
-                            key={item.id}
-                            className="item"
-                            onClick={() => setSelectedTable(item)}
-                            style={{
-                              backgroundColor:
-                                item.status === TABLE_STATUS.GUESTS
-                                  ? STATUS_TABLE_COLOR.GUESTS
-                                  : item.status === TABLE_STATUS.NOTREADY
-                                  ? STATUS_TABLE_COLOR.NOTREADY
-                                  : STATUS_TABLE_COLOR.READY,
-                            }}
-                          >
-                            {item.name}
-                            <Button onClick={editTableStatus}>
-                              <FontAwesomeIcon
-                                // id={item.newId}
-                                icon={faPenToSquare}
-                              />
-                            </Button>
-                          </Col>
-                        ))}
+                    {listTable?.map((item) => (
+                      <Col
+                        key={item.id}
+                        className="item"
+                        onClick={() => setSelectedTable(item)}
+                        style={{
+                          backgroundColor:
+                            item.status === TABLE_STATUS.GUESTS
+                              ? STATUS_TABLE_COLOR.GUESTS
+                              : item.status === TABLE_STATUS.NOTREADY
+                              ? STATUS_TABLE_COLOR.NOTREADY
+                              : STATUS_TABLE_COLOR.READY,
+                        }}
+                      >
+                        {item.name}
+                        <Button onClick={editTableStatus}>
+                          <FontAwesomeIcon
+                            // id={item.newId}
+                            icon={faPenToSquare}
+                          />
+                        </Button>
+                      </Col>
+                    ))}
 
-                        <Modal
-                          title="Trạng thái bàn hiện tại"
-                          open={isModalOpen}
-                          onCancel={handleCancel}
-                          footer={[]}
-                          width={380}
+                    <Modal
+                      title="Trạng thái bàn hiện tại - Bàn 2"
+                      open={isModalOpen}
+                      onCancel={handleCancel}
+                      footer={[]}
+                      width={380}
+                    >
+                      <Form
+                      // onFinish={formik.handleSubmit}
+                      >
+                        <Select
+                          defaultValue="Bàn trống"
+                          options={[
+                            {
+                              value: 1,
+                              label: "Bàn trống",
+                            },
+                            {
+                              value: 2,
+                              label: "Đang có khách",
+                            },
+                            {
+                              value: 3,
+                              label: "Đang chưa sẵn sàng",
+                            },
+                          ]}
+                          style={{ width: "100%", margin: "10px 0" }}
+                        />
+                        <TextArea placeholder="Ghi chú ..." rows="3"></TextArea>
+                        <Button
+                          type="primary"
+                          htmlType="submit"
+                          style={{ width: "100%", marginTop: "15px" }}
                         >
-                          <Form
-                          // onFinish={formik.handleSubmit}
-                          >
-                            <Select
-                              defaultValue="Bàn trống"
-                              options={[
-                                {
-                                  value: 1,
-                                  label: "Bàn trống",
-                                },
-                                {
-                                  value: 2,
-                                  label: "Đang có khách",
-                                },
-                                {
-                                  value: 3,
-                                  label: "Đang chưa sẵn sàng",
-                                },
-                              ]}
-                              style={{ width: "100%", margin: "10px 0" }}
-                            />
-                            <TextArea
-                              placeholder="Ghi chú ..."
-                              rows="3"
-                            ></TextArea>
-                            <Button
-                              type="primary"
-                              htmlType="submit"
-                              style={{ width: "100%", marginTop: "15px" }}
-                            >
-                              Cập nhật
-                            </Button>
-                          </Form>
-                        </Modal>
-                      </>
-                    )}
+                          Cập nhật
+                        </Button>
+                      </Form>
+                    </Modal>
                   </>
                 )}
               </Row>

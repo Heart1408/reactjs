@@ -8,6 +8,10 @@ const getCustomerInfoAPI = (booking_id) =>
 const createScheduleAPI = (payload) => api.post(`/schedule/add`, payload);
 const getTableStatusCurrentAPI = (table_id) =>
   api.get(`/table/getStatusCurrent/${table_id}`);
+const updateStatusBillAPI = (payload) =>
+  api.post(`/table/updateStatusBill`, payload);
+const paymentConfirmAPI = (payload) =>
+  api.post(`/table/paymentConfirm`, payload);
 
 export {
   getScheduleAPI,
@@ -16,4 +20,6 @@ export {
   getCustomerInfoAPI,
   createScheduleAPI,
   getTableStatusCurrentAPI,
+  updateStatusBillAPI,
+  paymentConfirmAPI,
 };

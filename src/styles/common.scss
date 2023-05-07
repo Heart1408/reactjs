@@ -3,6 +3,8 @@ $hover-color: #b3d9ff;
 $primary-color: rgb(30, 100, 156);
 $border-color:  #cdcecf;
 $background: #e6e1e1;
+$navy: rgb(19, 19, 57);
+$red: rgb(128, 0, 0);
 
 p {
   margin: 0;
@@ -58,4 +60,8 @@ p {
     line-height: 15px;
     padding: 0 12px 0 3px;
   }
+}
+
+.table-row-selected {
+  background-color: #b5cad4;
 }

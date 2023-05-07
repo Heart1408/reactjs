@@ -6,6 +6,7 @@ import dayjs from "dayjs";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleInfo } from "@fortawesome/free-solid-svg-icons";
 import { Modal, Button, Input, Select, DatePicker, Form } from "antd";
+import { STATUS_TABLE_COLOR } from "../../../../constants";
 const { TextArea } = Input;
 
 function Item(props) {
@@ -62,6 +63,7 @@ function Item(props) {
         onClick={() => {
           setOpenModalDetail(true);
         }}
+        style={{ background: STATUS_TABLE_COLOR.NOTREADY }}
       >
         {getTime(props.data.time)}
         <FontAwesomeIcon icon={faCircleInfo} />
@@ -76,24 +78,6 @@ function Item(props) {
         footer={[]}
         width={450}
       >
-        <UpdateStatus>
-          <form>
-            <Select
-              defaultValue="1"
-              options={[
-                { value: "1", label: "Khách chưa đến" },
-                { value: "2", label: "Khách đã đến" },
-                { value: "3", label: "Khách hủy đặt bàn" },
-              ]}
-              onChange={(value) => {}}
-            />
-
-            <Button type="primary" htmlType="submit">
-              Cập nhật
-            </Button>
-          </form>
-        </UpdateStatus>
-
         <FormStyle>
           <Form
             autoComplete="off"
@@ -103,6 +87,27 @@ function Item(props) {
             style={{ maxWidth: 450 }}
             initialValues={{ remember: true }}
           >
+            <Form.Item
+              label="Trạng thái:"
+              name="customername"
+              rules={[
+                {
+                  required: true,
+                  message: "Không được để trống!",
+                },
+              ]}
+            >
+              <Select
+                defaultValue="1"
+                options={[
+                  { value: "1", label: "Khách chưa đến" },
+                  { value: "2", label: "Khách đã đến" },
+                  { value: "3", label: "Khách hủy đặt bàn" },
+                ]}
+                style={{ width: "100%" }}
+                onChange={(value) => {}}
+              />
+            </Form.Item>
             <Form.Item
               label="Khách hàng: "
               name="customername"
@@ -220,7 +225,7 @@ function Item(props) {
 export default Item;
 
 const ScheduleItem = styled.div`
-  background-color: #003d99;
+  // background-color: #003d99;
   color: white;
   position: relative;
   display: flex;

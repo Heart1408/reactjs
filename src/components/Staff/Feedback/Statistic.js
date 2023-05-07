@@ -2,7 +2,9 @@ import React from "react";
 import { UsergroupAddOutlined } from "@ant-design/icons";
 import { Rate, Divider } from "antd";
 
-export default function Statistic() {
+export default function Statistic(props) {
+  const statistic = props.statistic;
+
   return (
     <div className="statistic">
       <p className="title">
@@ -10,31 +12,31 @@ export default function Statistic() {
         Thống kê lượt phản hồi
       </p>
       <div className="total-rate">
-        <p> Tổng lượt đánh giá: 3</p>
+        <p> Tổng lượt đánh giá: {statistic.total}</p>
         <div>
-          <Rate allowHalf value={4.7} />
-          <p>(4.7)</p>
+          <Rate allowHalf value={statistic.average} />
+          <p>{statistic.average}</p>
         </div>
       </div>
       <div className="rate">
         <Divider orientation="center"> Số lượt đánh giá:</Divider>
         <div>
-          <Rate value={5} /> 2
+          <Rate value={5} disabled /> {statistic.rate_5}
         </div>
         <div>
-          <Rate value={4} /> 1
+          <Rate value={4} disabled /> {statistic.rate_4}
         </div>
         <div>
-          <Rate value={3} /> 0
+          <Rate value={3} disabled /> {statistic.rate_3}
         </div>
         <div>
-          <Rate value={2} /> 0
+          <Rate value={2} disabled /> {statistic.rate_2}
         </div>
         <div>
-          <Rate value={1} /> 0
+          <Rate value={1} disabled /> {statistic.rate_1}
         </div>
-        <p>Đã đọc: 1</p>
-        <p>Chưa đọc: 2</p>
+        <p>Đã đọc: {statistic.read}</p>
+        <p>Chưa đọc: {statistic.unread}</p>
       </div>
     </div>
   );

@@ -3,6 +3,8 @@ import {
   createCategoryAPI,
   updateCategoryAPI,
   deleteCategoryAPI,
+  createProductAPI,
+  listProductAPI,
 } from "../services/category";
 import { useMutation, useQuery } from "react-query";
 
@@ -95,4 +97,53 @@ export const useDeleteCategory = (callback) => {
   });
 
   return useFetchDeleteCategory;
+};
+
+export const useCreateProduct = (callback) => {
+  const handleCreateProduct = async (params) => {
+    try {
+      const response = await createProductAPI(params);
+      if (!response?.success) {
+        throw response?.message;
+      }
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  const useMutationCreateProduct = useMutation(
+    ["createProduct"],
+    handleCreateProduct,
+    {
+      onSuccess: () => callback(true, "Thêm sản phẩm thành công!"),
+      onError: (res) => callback(false, null, res),
+    }
+  );
+
+  return useMutationCreateProduct;
+};
+
+export const useGetListProduct = (params) => {
+  const handleGetListProducts = async () => {
+    try {
+      const response = await listProductAPI(params);
+      if (!response?.success) {
+        throw response?.message;
+      }
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  const useFetchListProducts = useQuery(
+    ["getListProducts", params],
+    handleGetListProducts,
+    {
+      refetchOnWindowFocus: false,
+    }
+  );
+
+  return useFetchListProducts;
 };
