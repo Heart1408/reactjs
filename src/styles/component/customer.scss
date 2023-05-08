@@ -8,6 +8,15 @@
     margin-top: 20px;
   }
 
+  .list-customer {
+    cursor: pointer;
+    
+    .list-active {
+      background-color: $hover-color;
+      border-radius: 5px;
+    }
+  }
+
   .item {
     width: 100%;
     display: flex;
@@ -20,11 +29,27 @@
 
       p {
         margin-left: 5px;
+        width: 60px;
+        text-align: center;
         background-color: grey;
         border-radius: 3px;
-        padding: 3px 10px;
+        padding: 2px 0px;
         color: white;
       }
+
+      .active {
+        background-color: $primary-color;
+      }
+    }
+
+    .booking-status p {
+      margin-left: 5px;
+      width: 90px;
+      text-align: center;
+      background-color: grey;
+      border-radius: 3px;
+      padding: 2px 0px;
+      color: white;
     }
   }
 }
@@ -55,6 +80,10 @@
 
     svg {
       margin-right: 3px;
+    }
+
+    .wait {
+      color: $primary-color;
     }
 
     .success {

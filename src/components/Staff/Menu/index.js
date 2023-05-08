@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { DISH_STATUS } from "../../../constants";
+import { useSelector } from "react-redux";
+import { selectedCurrentUser } from "../../../redux/login/selector";
 import {
   useCreateCategory,
   useGetListCategory,
@@ -8,25 +10,17 @@ import {
   useGetListProduct,
 } from "../../../hooks/category";
 import { useFormik } from "formik";
-import AddProduct from "./AddProduct";
-import {
-  UndoOutlined,
-  EditOutlined,
-  ExclamationCircleOutlined,
-  DeleteOutlined,
-} from "@ant-design/icons";
+import { ExclamationCircleOutlined } from "@ant-design/icons";
 import {
   Button,
   Space,
   Input,
   Row,
-  Col,
   List,
   Card,
   Form,
   Modal,
   message,
-  Select,
 } from "antd";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -36,18 +30,25 @@ import {
   faPlus,
   faNoteSticky,
 } from "@fortawesome/free-solid-svg-icons";
+import ListProduct from "./ListProduct";
 const { Meta } = Card;
 
 function Menu() {
   const [openModalAddCategory, setOpenModalAddCategory] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
-  const [isDeleteProduct, setIsDeleteProduct] = useState(false);
+
+  const currentStaff = useSelector(selectedCurrentUser);
+  const isAdmin = currentStaff.role === "admin";
 
   const toggleModal = () => {
     setOpenModalAddCategory(!openModalAddCategory);
   };
 
-  const { data: dataCategoryResponse, refetch } = useGetListCategory();
+  const {
+    data: dataCategoryResponse,
+    isSuccess,
+    refetch,
+  } = useGetListCategory();
   const listCategory = dataCategoryResponse?.data;
 
   const handleCloseModal = () => {
@@ -106,11 +107,11 @@ function Menu() {
       okText: "Xác nhận",
       cancelText: "Hủy",
       onOk: () => {
-        isDeleteProduct ? console.log(id) : deleteCategory.mutate(id);
+        deleteCategory.mutate(id);
       },
     });
   };
-  // ------------------------------------------------------------------------------
+
   const [queryParams, setQueryParams] = useState({
     search_key: "",
     sortByPrice: null,
@@ -119,14 +120,18 @@ function Menu() {
   });
 
   const [categoryActive, setCategoryActive] = useState({
-    id: "2",
-    name: "Món chính",
+    id: null,
+    name: null,
   });
-  const [active, setActive] = useState("#95bcf3");
+
+  useEffect(() => {
+    setCategoryActive({
+      id: listCategory && listCategory[0] ? listCategory[0].id : null,
+      name: listCategory && listCategory[0] ? listCategory[0].type : null,
+    });
+  }, [listCategory, isSuccess]);
 
   const handleItemClick = (category) => {
-    if (category.id === 2) setActive("#95bcf3");
-    else setActive("unset");
     setCategoryActive({
       id: category.id,
       name: category.type,
@@ -146,34 +151,10 @@ function Menu() {
     });
   };
 
-  const onChangeKeyword = (keyword) => {
-    setQueryParams({
-      ...queryParams,
-      search_key: keyword,
-    });
-  };
-
-  const sortByPrice = (value) => {
-    setQueryParams({
-      ...queryParams,
-      sortByPrice: value,
-    });
-  };
-
-  const resetFilter = () => {
-    setQueryParams({
-      ...queryParams,
-      sortByPrice: null,
-      search_key: null,
-    });
-  };
-
   const {
     data: dataProductResponse,
-    isLoading: loading,
     isError: getListFail,
     error,
-    isSuccess,
   } = useGetListProduct(queryParams);
 
   const listProduct = dataProductResponse?.data;
@@ -184,9 +165,11 @@ function Menu() {
     }
   }, [getListFail]);
 
+  console.log(listProduct);
+
   return (
     <>
-      <Space className="menu" align="start">
+      <div className="menu">
         <div className="list-category">
           <List>
             <p className="title">Danh mục sản phẩm</p>
@@ -195,12 +178,7 @@ function Menu() {
                 key={item.id}
                 onClick={() => handleItemClick(item)}
                 style={{
-                  backgroundColor:
-                    item.id === 2
-                      ? active
-                      : categoryActive["id"] === item.id
-                      ? "#95bcf3"
-                      : "",
+                  background: categoryActive["id"] === item.id ? "#95bcf3" : "",
                 }}
               >
                 <Row justify="space-between">
@@ -209,15 +187,18 @@ function Menu() {
                     {item.type}
                   </Space>
                   <Space>
-                    <button onClick={handleClickEditCategory(item)}>
+                    <button
+                      onClick={handleClickEditCategory(item)}
+                      className={!isAdmin && "inactive"}
+                    >
                       <FontAwesomeIcon icon={faPen} />
                     </button>
                     <button
                       onClick={(e) => {
                         e.preventDefault();
-                        setIsDeleteProduct(false);
                         confirmDelete(item.id);
                       }}
+                      className={!isAdmin && "inactive"}
                     >
                       <FontAwesomeIcon icon={faXmarkCircle} />
                     </button>
@@ -257,16 +238,18 @@ function Menu() {
                 </Space>
               </Row>
             </List.Item>
-            <Space
-              onClick={() => {
-                toggleModal();
-                setIsEdit(false);
-              }}
-              className="add-category"
-            >
-              <FontAwesomeIcon icon={faPlus} />
-              <p>Thêm nhóm mới</p>
-            </Space>
+            {isAdmin && (
+              <Space
+                onClick={() => {
+                  toggleModal();
+                  setIsEdit(false);
+                }}
+                className="add-category"
+              >
+                <FontAwesomeIcon icon={faPlus} />
+                <p>Thêm nhóm mới</p>
+              </Space>
+            )}
 
             <Modal
               title={
@@ -308,106 +291,14 @@ function Menu() {
             </Modal>
           </List>
         </div>
-
-        <div className="product-list">
-          <p className="title">Danh sách sản phẩm </p>
-          <p style={{ fontStyle: "italic", fontSize: "16px", margin: "5px 0" }}>
-            {" "}
-            Danh mục {categoryActive["name"]}
-          </p>
-          <Row className="form-search" justify="space-between">
-            <Col>
-              <Space>
-                <Input
-                  placeholder="Nhập ..."
-                  onChange={(e) => onChangeKeyword(e.target.value)}
-                  value={queryParams["search_key"]}
-                ></Input>
-                <Select
-                  placeholder="--Giá--"
-                  style={{
-                    width: 120,
-                  }}
-                  options={[
-                    {
-                      value: "asc",
-                      label: "Tăng dần",
-                    },
-                    {
-                      value: "desc",
-                      label: "Giảm dần",
-                    },
-                  ]}
-                  onChange={(e) => sortByPrice(e)}
-                  value={queryParams["sortByPrice"]}
-                />
-                <Button
-                  onClick={() => resetFilter()}
-                  type="primary"
-                  icon={<UndoOutlined />}
-                ></Button>
-              </Space>
-            </Col>
-            <Col>
-              <AddProduct listCategory={listCategory ? listCategory : null} />
-            </Col>
-          </Row>
-          <List
-            className="list"
-            grid={{
-              gutter: 16,
-              xs: 1,
-              sm: 1,
-              md: 2,
-              lg: 3,
-              xl: 5,
-              xxl: 5,
-            }}
-            pagination={{
-              onChange: (page) => {
-                console.log(page);
-              },
-              pageSize: 10,
-            }}
-            dataSource={listProduct}
-            renderItem={(item) => (
-              <List.Item>
-                <Card
-                  cover={
-                    <img
-                      alt={item.image}
-                      src={`http://localhost:8000${item.image}`}
-                    />
-                  }
-                >
-                  <Meta
-                    title={
-                      <Row justify="space-between">
-                        <p className="product-name">{item.name}</p>
-                        <Row>
-                          <button
-                            onClick={(e) => {
-                              e.preventDefault();
-                              setIsDeleteProduct(true);
-                              confirmDelete(item.id);
-                            }}
-                          >
-                            <DeleteOutlined />
-                          </button>
-                          <button>
-                            <EditOutlined />
-                          </button>
-                        </Row>
-                      </Row>
-                    }
-                    description={`${item.price}đ`}
-                  />
-                </Card>
-              </List.Item>
-            )}
-          />
-        </div>
-      </Space>
+        <ListProduct
+          categoryActive={categoryActive}
+          isAdmin={isAdmin}
+          listCategory={listCategory}
+          queryParams={queryParams}
+          setQueryParams={setQueryParams}
+        />
+      </div>
     </>
   );
 }

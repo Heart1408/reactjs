@@ -45,3 +45,14 @@ export const BOOKING_STATUS = {
   CANCELLED: 3,
   PAID: 4,
 };
+
+export const BOOKING_COLOR = {
+  NOT_ARRIVED: "#1a75ff",
+  ARRIVED: "#5c8a8a",
+  CANCELLED: "#ff4d4d",
+};
+
+export const STAFF_ROLE = {
+  ADMIN: 1,
+  STAFF: 0,
+};

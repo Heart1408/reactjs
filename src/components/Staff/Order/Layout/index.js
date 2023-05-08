@@ -1,16 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  Select,
-  Row,
-  Col,
-  Button,
-  Space,
-  Modal,
-  Input,
-  Form,
-  Alert,
-} from "antd";
-import { getListTableAPI } from "../../../../services/schedule";
+import { Select, Row, Col, Button, Space, Modal, Input, Form } from "antd";
 import { STATUS_TABLE_COLOR, TABLE_STATUS } from "../../../../constants";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPenToSquare, faPlus } from "@fortawesome/free-solid-svg-icons";
@@ -18,30 +7,33 @@ import TableDetail from "./TableDetail";
 const { TextArea } = Input;
 
 function Layout(props) {
-  const [selectedFloor, setSelectedFloor] = useState(null);
+  const floors = props.listFloor;
+  const [selectedFloor, setSelectedFloor] = useState(
+    floors && floors[0] ? floors[0].id : null
+  );
+
+  useEffect(() => {
+    let l = floors && floors[0] && floors[0].id;
+    setSelectedFloor(l);
+  }, [floors]);
   const [selectedTable, setSelectedTable] = useState({});
-  const [listTable, setListTable] = useState([]);
   const [showItemBar, setShowItemBar] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  useEffect(() => {
-    if (props.listFloor[0]) setSelectedFloor(props.listFloor[0].id);
-  }, [props.listFloor]);
-
-  useEffect(() => {
-    const handleGetListTable = async () => {
-      try {
-        const response = await getListTableAPI(selectedFloor);
-        if (!response?.success) {
-          throw response?.message;
-        }
-        setListTable(response.data);
-      } catch (error) {
-        throw error;
-      }
-    };
-    handleGetListTable();
-  }, [selectedFloor]);
+  let listTable = [];
+  if (selectedFloor !== null && floors !== undefined) {
+    if (floors.length > 0) {
+      const floor = floors.find((floor) => floor.id === selectedFloor);
+      listTable =
+        floor &&
+        floor.tables &&
+        floor.tables.map((table) => ({
+          id: table.id,
+          name: table.name,
+          status: table.status,
+        }));
+    }
+  }
 
   function editTableStatus() {
     setIsModalOpen(true);
@@ -49,8 +41,6 @@ function Layout(props) {
   const handleCancel = () => {
     setIsModalOpen(false);
   };
-
-  console.log("onChangeTab", selectedTable);
 
   return (
     <Row>
@@ -66,7 +56,7 @@ function Layout(props) {
                     : "Tầng 1"
                 }
                 style={{ width: 120 }}
-                options={props.listFloor?.map((item) => ({
+                options={floors?.map((item) => ({
                   value: item.id,
                   label: item.name,
                 }))}

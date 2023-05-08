@@ -1,14 +1,10 @@
 import React, { useState, useEffect } from "react";
-import {
-  getFloorAPI,
-  getListTableAPI,
-  getScheduleAPI,
-} from "../../services/schedule";
+import { useGetFloor, useGetSchedule } from "../../hooks/schedule";
 import ScheduleItem from "../../components/Staff/Order/Schedule/Item";
 import AddShift from "../../components/Staff/Order/Schedule/AddShift";
-import { STATUS_TABLE_COLOR } from "../../constants";
 import Layout from "../../components/Staff/Order/Layout";
-import { Button, Select, Table, Row, Tabs, Alert, Space } from "antd";
+import { STATUS_TABLE_COLOR } from "../../constants";
+import { Button, Select, Table, Row, Tabs } from "antd";
 import { format } from "date-fns";
 
 function TableSchedule() {
@@ -21,55 +17,31 @@ function TableSchedule() {
   overmorrow.setDate(today.getDate() + 2);
 
   const [selectedDate, setSelectedDate] = useState(format(today, formatDBDate));
-  const [listFloor, setListFloor] = useState([]);
-  const [floorId, setFloorId] = useState(null);
-  const [listTable, setListTable] = useState([]);
-  const [listSchedule, setListSchedule] = useState([]);
+
+  const { data: dataFloorsResponse, isSuccess } = useGetFloor();
+  const floors = dataFloorsResponse?.data;
+
+  const { data: dataSchedulesResponse, refetch } = useGetSchedule(selectedDate);
+  const listSchedule = dataSchedulesResponse?.data;
+
+  const [selectedFloor, setSelectedFloor] = useState(null);
+  const floorOptions = floors?.map((floor) => ({
+    value: floor.id,
+    label: floor.name,
+  }));
+
+  let tableOptions = [];
+  if (selectedFloor !== null) {
+    const floor = floors?.find((floor) => floor.id === selectedFloor);
+    tableOptions = floor?.tables?.map((table) => ({
+      value: table.id,
+      label: table.name,
+    }));
+  }
 
   useEffect(() => {
-    const handleGetFloor = async () => {
-      try {
-        const response = await getFloorAPI();
-        if (!response?.success) {
-          throw response?.message;
-        }
-        setListFloor(response.data);
-        setFloorId(response.data[0].id);
-      } catch (err) {
-        throw err;
-      }
-    };
-
-    const handleGetListSchedule = async () => {
-      try {
-        const response = await getScheduleAPI(selectedDate);
-        if (!response?.success) {
-          throw response?.message;
-        }
-        setListSchedule(response.data);
-      } catch (err) {
-        throw err;
-      }
-    };
-
-    handleGetFloor();
-    handleGetListSchedule();
-  }, [selectedDate]);
-
-  useEffect(() => {
-    const handleGetListTable = async () => {
-      try {
-        const response = await getListTableAPI(floorId);
-        if (!response?.success) {
-          throw response?.message;
-        }
-        setListTable(response.data);
-      } catch (error) {
-        throw error;
-      }
-    };
-    handleGetListTable();
-  }, [floorId]);
+    setSelectedFloor(floors && floors[0] && floors[0].id);
+  }, [floors, isSuccess]);
 
   const getHour = (dateString) => {
     const date = new Date(dateString);
@@ -82,14 +54,11 @@ function TableSchedule() {
       tableName: (
         <>
           <Select
-            defaultValue={floorId}
+            defaultValue={selectedFloor}
             style={{ width: 110 }}
-            options={listFloor?.map((item) => ({
-              value: item.id,
-              label: item.name,
-            }))}
+            options={floorOptions}
             onChange={(value) => {
-              setFloorId(value);
+              setSelectedFloor(value);
             }}
           />
         </>
@@ -97,16 +66,20 @@ function TableSchedule() {
     },
   ];
 
-  function renderSchedule(listTable, listSchedule) {
-    listTable?.map((item) => {
+  function renderSchedule(tableOptions, listSchedule) {
+    tableOptions?.map((item) => {
       const result = {
-        key: item.id,
-        tableName: item.name,
+        key: item.value,
+        tableName: item.label,
       };
       listSchedule?.map((listScheduleItem) => {
         result[`time_${getHour(listScheduleItem.time)}`] =
-          listScheduleItem.table_detail_id === item.id ? (
-            <ScheduleItem data={listScheduleItem} listFloor={listFloor} />
+          listScheduleItem.table_detail_id === item.value ? (
+            <ScheduleItem
+              data={listScheduleItem}
+              listFloor={floors}
+              refetch={refetch}
+            />
           ) : (
             ""
           );
@@ -115,18 +88,20 @@ function TableSchedule() {
     });
   }
 
-  if (listTable === undefined || listTable.length === 0) {
-    data.push({
-      tableName: (
-        <>
-          Chưa có bàn nào!
-          <Button>Thêm bàn</Button>
-        </>
-      ),
-    });
+  if (selectedFloor !== null && tableOptions !== undefined) {
+    if (tableOptions.length === 0) {
+      data.push({
+        tableName: (
+          <>
+            Chưa có bàn nào!
+            <Button>Thêm bàn</Button>
+          </>
+        ),
+      });
+    }
   }
 
-  renderSchedule(listTable, listSchedule);
+  renderSchedule(tableOptions, listSchedule);
 
   const columns = [
     {
@@ -258,7 +233,7 @@ function TableSchedule() {
     {
       key: "1",
       label: `Quản lý bàn`,
-      children: <Layout listFloor={listFloor} />,
+      children: <Layout listFloor={floors} />,
     },
     {
       key: "2",
@@ -274,7 +249,7 @@ function TableSchedule() {
                 setSelectedDate(value);
               }}
             />
-            <AddShift listFloor={listFloor} />
+            <AddShift listFloor={floors} refetch={refetch} />
           </Row>
 
           <Row className="note" style={{ width: "100%" }}>
@@ -308,7 +283,6 @@ function TableSchedule() {
             pagination={{ pageSize: 4 }}
             scroll={{
               x: 1280,
-              // y: 600,
             }}
           />
         </>

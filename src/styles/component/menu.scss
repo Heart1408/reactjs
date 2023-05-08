@@ -1,5 +1,12 @@
 .menu {
-  margin-top: -25px;
+  display: flex;
+  width: 100%;
+
+  .inactive {
+    background-color: $inactive;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
 
   button {
     background-color: $primary-color;
@@ -16,6 +23,7 @@
 .list-category {
   min-width: 230px;
   margin-right: 5px;
+  flex: 1;
 
   .title {
     border-bottom: 3px solid $border-color;
@@ -96,10 +104,13 @@
 }
 
 .product-list {
+  
+  flex: 4;
   background-color: rgb(235, 235, 235);
   padding: 15px 20px;
   border-radius: 30px 0 0 0 ;
   margin: -10px -25px 0 0;
+  // min-width: 850px;
 
   .title {
     border-bottom: 3px solid  $border-color;
@@ -110,12 +121,35 @@
     width: 163px;
   }
 
+  .ant-card-bordered {
+    min-width: 100px;
+  }
+
   .list {
-    img {
-      margin: 0;
-      width: 95%;
-      margin: auto;
-      margin-top: 5px;
+    .img {
+      position: relative;
+      width: 100%;
+      min-width: 100px;
+      height: 110px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      span {
+        position: absolute;
+        top: 3px;
+        right: 3px;
+        background-color: $red;
+        color: white;
+        border-radius: 3px 10px 3px 3px;
+        font-size: 13px;
+        padding: 1px 10px;
+      }
+
+      img {
+        max-width: 100%;
+        max-height: 100%;
+      }
     }
 
     .ant-card-body {

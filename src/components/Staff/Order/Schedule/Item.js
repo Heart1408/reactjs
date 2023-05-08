@@ -1,12 +1,13 @@
-import React, { useState, useEffect } from "react";
-import { useGetCustomerInfo } from "../../../../hooks/schedule";
-import { getListTableAPI } from "../../../../services/schedule";
+import React, { useState } from "react";
+import { useGetCustomerInfo } from "../../../../hooks/customer";
+import { useUpdateSchedule } from "../../../../hooks/schedule";
+import { useFormik } from "formik";
 import styled from "styled-components";
 import dayjs from "dayjs";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleInfo } from "@fortawesome/free-solid-svg-icons";
-import { Modal, Button, Input, Select, DatePicker, Form } from "antd";
-import { STATUS_TABLE_COLOR } from "../../../../constants";
+import { Modal, Button, Input, Select, DatePicker, Form, message } from "antd";
+import { BOOKING_COLOR, BOOKING_STATUS } from "../../../../constants";
 const { TextArea } = Input;
 
 function Item(props) {
@@ -14,26 +15,65 @@ function Item(props) {
   const { data: dataResponse } = useGetCustomerInfo(props.data.id);
   const customerInfo = dataResponse?.data;
 
-  const [floorId, setFloorId] = useState();
-  const [listTable, setListTable] = useState(null);
+  const handleResponse = (isSuccess, success = null, error = null) => {
+    if (isSuccess) {
+      message.success(success);
+      handleCloseModel();
+      props.refetch();
+      return;
+    }
+    message.error(error || "Có lỗi xảy ra");
+  };
 
-  useEffect(() => {
-    const handleGetListTable = async () => {
-      try {
-        const response = await getListTableAPI(floorId);
-        if (!response?.success) {
-          throw response?.message;
-        }
-        setListTable(response.data);
-      } catch (error) {
-        throw error;
-      }
-    };
-    handleGetListTable();
-  }, [floorId]);
+  const mutateUpdateSchedule = useUpdateSchedule(handleResponse);
+
+  const [initialValues, setInitialValues] = useState({
+    status: props.data.status,
+    table_id: props.data.table_detail_id,
+    time: props.data.time,
+    note: props.data.note,
+    id: props.data.id,
+  });
+
+  const formik = useFormik({
+    initialValues: initialValues,
+    enableReinitialize: true,
+    onSubmit: (values) => {
+      mutateUpdateSchedule.mutate(values);
+    },
+  });
+
+  const handleCloseModel = () => {
+    formik.resetForm();
+    setInitialValues({
+      status: props.data.status,
+      table_id: props.data.table_detail_id,
+      time: props.data.time,
+      note: props.data.note,
+      id: props.data.id,
+    });
+    setOpenModalDetail(false);
+  };
+
+  const floors = props.listFloor;
+  const [floorId, setFloorId] = useState(customerInfo?.floor_id);
+
+  let listTable = [];
+  if (floorId !== null && floors !== undefined) {
+    if (floors.length > 0) {
+      const floor = floors.find((floor) => floor.id === floorId);
+      listTable =
+        floor &&
+        floor.tables &&
+        floor.tables.map((table) => ({
+          id: table.id,
+          name: table.name,
+          status: table.status,
+        }));
+    }
+  }
 
   const time = props.data.time;
-  console.log("test", props.data);
 
   const getTime = (datetime) => {
     return datetime.substring(11, 16);
@@ -48,7 +88,6 @@ function Item(props) {
   };
 
   const disabledDate = (current) => {
-    // Can not select days before today and today
     return current && current < dayjs().endOf("day");
   };
   const disabledDateTime = () => ({
@@ -57,13 +96,21 @@ function Item(props) {
     disabledSeconds: () => [55, 56],
   });
 
+  const booking_status = props.data.status;
   return (
     <>
       <ScheduleItem
         onClick={() => {
           setOpenModalDetail(true);
         }}
-        style={{ background: STATUS_TABLE_COLOR.NOTREADY }}
+        style={{
+          background:
+            booking_status === BOOKING_STATUS.NOT_ARRIVED
+              ? BOOKING_COLOR.NOT_ARRIVED
+              : booking_status === BOOKING_STATUS.CANCELLED
+              ? BOOKING_COLOR.CANCELLED
+              : BOOKING_COLOR.ARRIVED,
+        }}
       >
         {getTime(props.data.time)}
         <FontAwesomeIcon icon={faCircleInfo} />
@@ -72,151 +119,139 @@ function Item(props) {
       <Modal
         title="Chi tiết lịch đặt bàn"
         open={openModalDetail}
-        onCancel={() => {
-          setOpenModalDetail(false);
-        }}
+        onCancel={handleCloseModel}
         footer={[]}
         width={450}
       >
-        <FormStyle>
-          <Form
-            autoComplete="off"
-            layout="horizontal"
-            labelCol={{ span: 6 }}
-            wrapperCol={{ span: 17 }}
-            style={{ maxWidth: 450 }}
-            initialValues={{ remember: true }}
+        <Form
+          autoComplete="off"
+          layout="horizontal"
+          labelCol={{ span: 6 }}
+          wrapperCol={{ span: 17 }}
+          style={{ maxWidth: 450 }}
+          initialValues={{ remember: true }}
+          onFinish={formik.handleSubmit}
+        >
+          <Form.Item label="Trạng thái:">
+            <Select
+              name="status"
+              value={formik.values.status}
+              options={[
+                { value: BOOKING_STATUS.NOT_ARRIVED, label: "Khách chưa đến" },
+                { value: BOOKING_STATUS.ARRIVED, label: "Khách đã đến" },
+                { value: BOOKING_STATUS.CANCELLED, label: "Khách hủy đặt bàn" },
+              ]}
+              style={{ width: "100%" }}
+              onChange={(e) => {
+                formik.setFieldValue("status", e);
+              }}
+            />
+          </Form.Item>
+          <Form.Item
+            label="Khách hàng: "
+            rules={[
+              {
+                required: true,
+                message: "Không được để trống!",
+              },
+            ]}
           >
-            <Form.Item
-              label="Trạng thái:"
-              name="customername"
-              rules={[
-                {
-                  required: true,
-                  message: "Không được để trống!",
-                },
-              ]}
-            >
-              <Select
-                defaultValue="1"
-                options={[
-                  { value: "1", label: "Khách chưa đến" },
-                  { value: "2", label: "Khách đã đến" },
-                  { value: "3", label: "Khách hủy đặt bàn" },
-                ]}
-                style={{ width: "100%" }}
-                onChange={(value) => {}}
-              />
-            </Form.Item>
-            <Form.Item
-              label="Khách hàng: "
-              name="customername"
-              rules={[
-                {
-                  required: true,
-                  message: "Không được để trống!",
-                },
-              ]}
-            >
-              <Input
-                defaultValue={customerInfo && customerInfo.fullname}
-                disabled
-              />
-            </Form.Item>
-            <Form.Item
-              label="Số điện thoại: "
-              name="phone"
-              rules={[
-                {
-                  required: true,
-                  message: "Không được để trống!",
-                },
-              ]}
-            >
-              <Input
-                defaultValue={customerInfo && customerInfo.phone}
-                disabled
-              />
-            </Form.Item>
+            <Input
+              defaultValue={customerInfo && customerInfo.fullname}
+              disabled
+            />
+          </Form.Item>
+          <Form.Item
+            label="Số điện thoại: "
+            rules={[
+              {
+                required: true,
+                message: "Không được để trống!",
+              },
+            ]}
+          >
+            <Input defaultValue={customerInfo && customerInfo.phone} disabled />
+          </Form.Item>
 
-            <Form.Item
-              label="Thời gian: "
-              name="date"
-              rules={[
-                {
-                  required: true,
-                  message: "Không được để trống!",
-                },
-              ]}
-            >
-              <DatePicker
-                format="YYYY-MM-DD HH:mm:ss"
-                disabledDate={disabledDate}
-                disabledTime={disabledDateTime}
-                // showTime={{
-                //   defaultValue: dayjs('00:00:00', 'HH:mm:ss'),
-                // }}
-                defaultValue={dayjs(time)}
-                style={{ width: "100%" }}
-              />
-            </Form.Item>
+          <Form.Item
+            label="Thời gian: "
+            rules={[
+              {
+                required: true,
+                message: "Không được để trống!",
+              },
+            ]}
+          >
+            <DatePicker
+              name="time"
+              format="YYYY-MM-DD HH:mm:ss"
+              placeholder="Chọn thời gian"
+              disabledDate={disabledDate}
+              disabledTime={disabledDateTime}
+              // defaultValue={dayjs(time)}
+              value={dayjs(formik.values.time)}
+              onChange={(value) => {
+                console.log("time", value.format("YYYY-MM-DD HH:mm:ss"));
+                formik.setFieldValue(
+                  "time",
+                  value.format("YYYY-MM-DD HH:mm:ss")
+                );
+              }}
+            />
+          </Form.Item>
 
-            <Form.Item
-              label="Tầng, bàn: "
-              name="floor"
-              rules={[
-                {
-                  required: true,
-                  message: "Không được để trống!",
-                },
-              ]}
-            >
-              <Select
-                defaultValue={customerInfo && customerInfo.floor_id}
-                options={props.listFloor?.map((item) => ({
-                  value: item.id,
-                  label: item.name,
-                }))}
-                onChange={(value) => {
-                  setFloorId(value);
-                }}
-              />
-              <Select
-                style={{
-                  paddingLeft: "15px",
-                }}
-                defaultValue={props.data.table_detail_id}
-                options={listTable?.map((item) => ({
-                  value: item.id,
-                  label: item.name,
-                }))}
-              />
-            </Form.Item>
+          <Form.Item
+            label="Tầng, bàn: "
+            rules={[
+              {
+                required: true,
+                message: "Không được để trống!",
+              },
+            ]}
+          >
+            <Select
+              defaultValue={customerInfo && customerInfo.floor_id}
+              options={props.listFloor?.map((item) => ({
+                value: item.id,
+                label: item.name,
+              }))}
+              onChange={(value) => {
+                setFloorId(value);
+              }}
+            />
+            <Select
+              name="table_id"
+              style={{
+                paddingLeft: "15px",
+              }}
+              options={listTable?.map((item) => ({
+                value: item.id,
+                label: item.name,
+              }))}
+              onChange={(value) => {
+                formik.setFieldValue("table_id", value);
+              }}
+              value={formik.values.table_id}
+            />
+          </Form.Item>
 
-            <Form.Item
-              label="Ghi chú:"
-              rules={[
-                {
-                  required: true,
-                  message: "Không được để trống!",
-                },
-              ]}
-            >
-              <TextArea
-                rows={3}
-                defaultValue={props.data.note}
-                // placeholder="maxLength is 6"
-                // maxLength={6}
-              />
-            </Form.Item>
+          <Form.Item label="Ghi chú:">
+            <TextArea
+              rows={3}
+              defaultValue={props.data.note}
+              // maxLength={6}
+              name="note"
+              onChange={formik.handleChange}
+              value={formik.values.note}
+            />
+          </Form.Item>
 
-            <Form.Item label=" " colon={false}>
-              <Button type="primary" htmlType="submit">
-                Chỉnh sửa
-              </Button>
-            </Form.Item>
-          </Form>
-        </FormStyle>
+          <Form.Item label=" " colon={false}>
+            <Button type="primary" htmlType="submit">
+              Chỉnh sửa
+            </Button>
+          </Form.Item>
+        </Form>
       </Modal>
     </>
   );

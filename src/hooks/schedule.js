@@ -2,8 +2,8 @@ import {
   getScheduleAPI,
   getFloorAPI,
   getListTableAPI,
-  getCustomerInfoAPI,
   createScheduleAPI,
+  updateScheduleAPI,
   getTableStatusCurrentAPI,
   updateStatusBillAPI,
   paymentConfirmAPI,
@@ -78,30 +78,6 @@ export const useGetListTable = (floor_id) => {
   return useFetchListTable;
 };
 
-export const useGetCustomerInfo = (booking_id) => {
-  const handleGetCustomerInfo = async () => {
-    try {
-      const response = await getCustomerInfoAPI(booking_id);
-      if (!response?.success) {
-        throw response?.message;
-      }
-      return response;
-    } catch (error) {
-      throw error;
-    }
-  };
-
-  const useFetchCustomerInfo = useQuery(
-    ["getCustomerInfo", booking_id],
-    handleGetCustomerInfo,
-    {
-      refetchOnWindowFocus: false,
-    }
-  );
-
-  return useFetchCustomerInfo;
-};
-
 export const useCreateSchedule = (callback) => {
   const handleCreateSchedule = async (params) => {
     try {
@@ -125,6 +101,31 @@ export const useCreateSchedule = (callback) => {
   );
 
   return useMutationCreateSchedule;
+};
+
+export const useUpdateSchedule = (callback) => {
+  const handleUpdateSchedule = async (params) => {
+    try {
+      const response = await updateScheduleAPI(params);
+      if (!response?.success) {
+        throw response?.message;
+      }
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  const useMutationUpdateSchedule = useMutation(
+    ["updateSchedule"],
+    handleUpdateSchedule,
+    {
+      onSuccess: (res) => callback(true, res.message),
+      onError: (res) => callback(false, null, res),
+    }
+  );
+
+  return useMutationUpdateSchedule;
 };
 
 export const useGetTableCurrent = (table_id) => {

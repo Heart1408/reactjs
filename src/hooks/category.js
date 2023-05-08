@@ -5,6 +5,7 @@ import {
   deleteCategoryAPI,
   createProductAPI,
   listProductAPI,
+  deleteProductAPI,
 } from "../services/category";
 import { useMutation, useQuery } from "react-query";
 
@@ -146,4 +147,25 @@ export const useGetListProduct = (params) => {
   );
 
   return useFetchListProducts;
+};
+
+export const useDeleteProduct = (callback) => {
+  const handleDelete = async (id) => {
+    try {
+      const response = await deleteProductAPI(id);
+      if (!response.success) {
+        throw response?.message;
+      }
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  const useFetchDeleteProduct = useMutation("deleteProduct", handleDelete, {
+    onSuccess: (res) => callback(true, res.message),
+    onError: (res) => callback(false, null, res),
+  });
+
+  return useFetchDeleteProduct;
 };

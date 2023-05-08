@@ -14,7 +14,7 @@ import {
 } from "antd";
 
 function AddProduct(props) {
-  const { listCategory } = props;
+  const { listCategory, isAdmin, refetch } = props;
 
   const data = [];
   for (let i = 1; i < 20; i++) {
@@ -36,7 +36,7 @@ function AddProduct(props) {
     if (isSuccess) {
       message.success(success);
       handleCancel();
-      // refetch();
+      refetch();
       return;
     }
     message.error(error || "Có lỗi xảy ra");
@@ -93,7 +93,12 @@ function AddProduct(props) {
 
   return (
     <div className="add-product">
-      <Button onClick={showModal} type="primary" icon={<PlusOutlined />}>
+      <Button
+        onClick={showModal}
+        className={!isAdmin && "inactive"}
+        type="primary"
+        icon={<PlusOutlined />}
+      >
         Thêm sản phẩm
       </Button>
       <Modal
@@ -182,7 +187,6 @@ function AddProduct(props) {
                   },
                 ]}
                 onChange={(e) => {
-                  console.log("sa", e);
                   formik.setFieldValue("status", e);
                 }}
                 value={formik.values.status}

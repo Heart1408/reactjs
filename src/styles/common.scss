@@ -5,10 +5,18 @@ $border-color:  #cdcecf;
 $background: #e6e1e1;
 $navy: rgb(19, 19, 57);
 $red: rgb(128, 0, 0);
+$inactive: #dee7f3;
 
 p {
   margin: 0;
 }
+
+.inactive {
+  background-color: $inactive;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
 
 .title {
   border-bottom: 3px solid $border-color;

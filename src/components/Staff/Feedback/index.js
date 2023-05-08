@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
+import { FeedbackContext } from "../../../Context/FeedbackProvider";
 import { useGetFeedbackList } from "../../../hooks/feedback";
 import { FEEDBACK_STATUS, RATE } from "../../../constants";
 import { Row, Col, Button, Space, Select, Rate } from "antd";
@@ -7,6 +8,8 @@ import FeedbackList from "./FeedbackList";
 import Statistic from "./Statistic";
 
 function Feedback() {
+  const { setUnreadFeedbackCount } = useContext(FeedbackContext);
+
   const today = new Date();
   const [selectedMonth, setSelectedMonth] = useState(null);
   const [dayOption, setDayOption] = useState([]);
@@ -36,7 +39,6 @@ function Feedback() {
   }, [selectedMonth]);
 
   const [queryParams, setQueryParams] = useState({
-    year: null,
     month: null,
     day: null,
     rate: null,
@@ -91,51 +93,12 @@ function Feedback() {
 
   const reloadFormSearch = () => {
     setQueryParams({
-      year: null,
       month: null,
       day: null,
       rate: null,
       status: null,
     });
   };
-
-  // const calculateFeeback = (data) => {
-  //   let total = data.length;
-  //   let rate_5 = 0;
-  //   let rate_4 = 0;
-  //   let rate_3 = 0;
-  //   let rate_2 = 0;
-  //   let rate_1 = 0;
-  //   let read = 0;
-  //   let unread = 0;
-  //   data.forEach((item) => {
-  //     item.rate === 5
-  //       ? (rate_5 += 1)
-  //       : item.rate === 4
-  //       ? (rate_4 += 1)
-  //       : item.rate === 3
-  //       ? (rate_3 += 1)
-  //       : item.rate === 2
-  //       ? (rate_2 += 1)
-  //       : (rate_1 += 1);
-
-  //     item.feedback_status === 1 ? (unread += 1) : (read += 1);
-  //   });
-  //   let average =
-  //     (rate_5 * 5 + rate_4 * 4 + rate_3 * 2 + rate_2 * 2 + rate_1) / total;
-
-  //   setStatistic({
-  //     total: total,
-  //     average: average,
-  //     rate_5: rate_5,
-  //     rate_4: rate_4,
-  //     rate_3: rate_3,
-  //     rate_2: rate_2,
-  //     rate_1: rate_1,
-  //     read: read,
-  //     unread: unread,
-  //   });
-  // };
 
   const calculateFeeback = (data) => {
     let total = data.length;
@@ -160,9 +123,11 @@ function Feedback() {
       rate_3: rates[2],
       rate_2: rates[1],
       rate_1: rates[0],
-      read: feedbackStatus[0],
-      unread: feedbackStatus[1],
+      read: feedbackStatus[1],
+      unread: feedbackStatus[0],
     });
+
+    setUnreadFeedbackCount(feedbackStatus[0]);
   };
 
   useEffect(() => {
@@ -212,7 +177,7 @@ function Feedback() {
             disabled={queryParams["month"] === null && true}
           />
           <Select
-            placeholder="--Trạng thái xem--"
+            placeholder="--Trạng thái--"
             style={{
               width: 160,
             }}
@@ -227,9 +192,10 @@ function Feedback() {
               },
             ]}
             onChange={handleChangeStatus}
+            value={queryParams["feedback_status"]}
           />
           <Select
-            placeholder="--Sao đánh giá--"
+            placeholder="--Đánh giá--"
             style={{
               width: 160,
             }}
@@ -238,6 +204,7 @@ function Feedback() {
               label: <Rate value={value} disabled />,
             }))}
             onChange={handleChangeRate}
+            value={queryParams["rate"]}
           />
           <Button
             onClick={reloadFormSearch}
@@ -248,7 +215,7 @@ function Feedback() {
       </Row>
       <Row>
         <Col flex="2">
-          <FeedbackList feedbackList={feedbackList} />
+          <FeedbackList feedbackList={feedbackList} refetch={refetch} />
         </Col>
         <Col flex="1">
           <Statistic statistic={statistic} />

@@ -17,6 +17,7 @@ export const AuthenticationSlice = createSlice({
     },
     handleLoginResponse: (state, action) => {
       const { user_info, token } = action.payload;
+      console.log("test", action.payload);
       return {
         ...state,
         authenticationToken: token,

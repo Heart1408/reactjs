@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import { useGetCurrentStaff } from "../../../../hooks/auth";
-import { useGetListTable, useCreateSchedule } from "../../../../hooks/schedule";
+import { useCreateSchedule } from "../../../../hooks/schedule";
+import { useSelector } from "react-redux";
+import { selectedCurrentUser } from "../../../../redux/login/selector";
 import { useFormik } from "formik";
 import dayjs from "dayjs";
 import styled from "styled-components";
@@ -21,17 +22,27 @@ import {
 const { TextArea } = Input;
 
 function AddShift(props) {
-  const { data: currentStaffDataResponse } = useGetCurrentStaff();
-  const currentStaff = currentStaffDataResponse?.data;
+  const currentStaff = useSelector(selectedCurrentUser);
+
+  const floors = props.listFloor;
 
   const [floorId, setFloorId] = useState(
-    props.listFloor.length !== 0 ? props.listFloor[0].id : null
+    floors && floors[0] ? floors[0].id : null
   );
-  const { data: listTableResponse } = useGetListTable(floorId);
-  const listTable = listTableResponse?.data;
+
+  let listTable = [];
+  if (floorId !== null) {
+    const floor = floors.find((floor) => floor.id === floorId);
+    listTable = floor.tables.map((table) => ({
+      id: table.id,
+      name: table.name,
+    }));
+  }
+
   const handleUpdateResponse = (isSuccess, success = null, error = null) => {
     if (isSuccess) {
       message.success(success);
+      props.refetch();
       handleCancel();
       return;
     }
@@ -62,7 +73,7 @@ function AddShift(props) {
 
   const handleCancel = () => {
     setIsModalOpen(false);
-    formik.handleReset();
+    formik.resetForm();
     setInitialValues({
       phone: null,
       customername: null,
@@ -70,10 +81,6 @@ function AddShift(props) {
       time: null,
       note: null,
     });
-  };
-
-  const onSubmitShiftFailed = (errorInfo) => {
-    console.log("Failed:", errorInfo);
   };
 
   const range = (start, end) => {
@@ -110,7 +117,6 @@ function AddShift(props) {
         <FormStyle>
           <Form
             onFinish={formik.handleSubmit}
-            onFinishFailed={onSubmitShiftFailed}
             autoComplete="off"
             layout="vertical"
             name="basic"
@@ -126,15 +132,12 @@ function AddShift(props) {
               }}
             >
               <FontAwesomeIcon icon={faUserTie} /> Nhân viên nhận đặt:{" "}
-              {/* {currentStaff && currentStaff.username}
-               */}
-              Tâm Vũ
+              {currentStaff.username}
             </p>
             <Space direction="vertical">
               <Space>
                 <Form.Item
                   label="Số điện thoại: "
-                  name="phone"
                   rules={[
                     {
                       required: true,
@@ -143,16 +146,22 @@ function AddShift(props) {
                   ]}
                 >
                   <Input
+                    placeholder="Nhập số điện thoại"
+                    name="phone"
                     onChange={(e) =>
                       formik.setFieldValue("phone", e.target.value)
                     }
+                    value={formik.values.phone}
                   />
                 </Form.Item>
                 {formik.errors.phone && (
                   <p className="pl-2 pt-1 text-danger">{formik.errors.phone}</p>
                 )}
-                <Form.Item label="Khách hàng: " name="customername">
+                <Form.Item label="Khách hàng: ">
                   <Input
+                    placeholder="Nhập tên khách hàng"
+                    name="customername"
+                    value={formik.values.customername}
                     onChange={(e) =>
                       formik.setFieldValue("customername", e.target.value)
                     }
@@ -160,8 +169,9 @@ function AddShift(props) {
                 </Form.Item>
               </Space>
               <Space>
-                <Form.Item label="Tầng: " name="floor">
+                <Form.Item label="Tầng: ">
                   <Select
+                    name="floor"
                     defaultValue={
                       props.listFloor.length !== 0 ? props.listFloor[0].id : ""
                     }
@@ -176,7 +186,6 @@ function AddShift(props) {
                 </Form.Item>
                 <Form.Item
                   label="Bàn: "
-                  name="table_position"
                   rules={[
                     {
                       required: true,
@@ -193,12 +202,13 @@ function AddShift(props) {
                     <Select
                       allowClear
                       placeholder="Chọn bàn"
+                      name="table_id"
                       options={listTable?.map((item) => ({
                         value: item.id,
                         label: item.name,
                       }))}
+                      value={formik.values.table_id}
                       onChange={(value) => {
-                        console.log("table_id", value);
                         formik.setFieldValue("table_id", value);
                       }}
                     />
@@ -209,7 +219,6 @@ function AddShift(props) {
               <Row>
                 <Form.Item
                   label="Thời gian: "
-                  name="date"
                   rules={[
                     {
                       required: true,
@@ -218,6 +227,7 @@ function AddShift(props) {
                   ]}
                 >
                   <DatePicker
+                    name="time"
                     format="YYYY-MM-DD HH:mm:ss"
                     placeholder="Chọn thời gian"
                     disabledDate={disabledDate}
@@ -243,6 +253,7 @@ function AddShift(props) {
                   style={{ marginLeft: "10px" }}
                 >
                   <TextArea
+                    name="note"
                     rows={2}
                     placeholder="Nhập ghi chú"
                     onChange={(e) =>

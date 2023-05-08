@@ -1,8 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
+import { FeedbackContext } from "../../../Context/FeedbackProvider";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { handleLogout } from "../../../redux/login/slice";
-import selectAuthentication from "../../../redux/login/selector";
+import selectAuthentication, {
+  selectedCurrentUser,
+} from "../../../redux/login/selector";
 import { getToken } from "../../../services/api";
 import { Layout, Menu } from "antd";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -22,9 +25,13 @@ import { Avatar } from "antd";
 const { Sider } = Layout;
 
 function Sidebar(props) {
+  const { unreadFeedbackCount } = useContext(FeedbackContext);
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const token = useSelector(selectAuthentication.getAuthenticationToken);
+  const currentStaff = useSelector(selectedCurrentUser);
+
   const [isLogin, setIsLogin] = useState(token !== "");
   const { collapsed } = props;
 
@@ -71,7 +78,9 @@ function Sidebar(props) {
       label: (
         <NavLink to="/staff/feedback" className="list-group-item">
           <FontAwesomeIcon icon={faComment} size="lg" />
-          <span className="new-feedback">2</span>
+          {unreadFeedbackCount !== 0 && (
+            <span className="new-feedback">{unreadFeedbackCount}</span>
+          )}
           <span className={`nav-text ${hiddenClass}`}>Phản hồi</span>
         </NavLink>
       ),
@@ -85,7 +94,7 @@ function Sidebar(props) {
         </NavLink>
       ),
     },
-    {
+    currentStaff.role === "admin" && {
       key: "6",
       label: (
         <NavLink to="/staff/staffmanagement" className="list-group-item">
@@ -118,7 +127,7 @@ function Sidebar(props) {
     <Sider trigger={null} collapsible collapsed={collapsed} className="sidebar">
       <div className="avatar">
         <Avatar icon={<UserOutlined />}></Avatar>
-        <p>Tâm Vũ</p>
+        <p>{currentStaff.username}</p>
       </div>
       <Menu
         theme="dark"
