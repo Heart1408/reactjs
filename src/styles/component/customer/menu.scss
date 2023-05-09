@@ -217,7 +217,8 @@
 
     .img { 
       img {
-        width: 95%;
+        max-width: 95%;
+        max-height: 100%;
       }
     }
 

@@ -43,6 +43,9 @@ export const AuthenticationSlice = createSlice({
       authenticationToken: "",
       currentUser: {},
     }),
+    handleCustomerLogout: (state, action) => ({
+      confirmCustomerToken: "",
+    }),
   },
 });
 
@@ -52,6 +55,7 @@ export const {
   handleConfirmCustomerRequest,
   handleConfirmCustomerResponse,
   handleLogout,
+  handleCustomerLogout,
 } = AuthenticationSlice.actions;
 
 export const namespace = "AuthenticationSlice";

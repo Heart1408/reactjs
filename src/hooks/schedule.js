@@ -7,6 +7,7 @@ import {
   getTableStatusCurrentAPI,
   updateStatusBillAPI,
   paymentConfirmAPI,
+  updateTableStatusAPI,
 } from "../services/schedule";
 import { useMutation, useQuery } from "react-query";
 
@@ -200,4 +201,29 @@ export const usePaymentConfirm = (callback) => {
   );
 
   return useMutationPaymentConfirm;
+};
+
+export const useUpdateTableStatus = (callback) => {
+  const handleUpdateTableStatus = async (params) => {
+    try {
+      const response = await updateTableStatusAPI(params);
+      if (!response?.success) {
+        throw response?.message;
+      }
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  const useMutationUpdateTableStatus = useMutation(
+    ["updateTableStatus"],
+    handleUpdateTableStatus,
+    {
+      onSuccess: (res) => callback(true, res.message),
+      onError: (res) => callback(false, null, res),
+    }
+  );
+
+  return useMutationUpdateTableStatus;
 };

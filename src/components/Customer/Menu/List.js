@@ -82,11 +82,19 @@ function Menu() {
     });
   };
 
+  const onChangeCategory = (value) => {
+    setQueryParams({
+      ...queryParams,
+      categoryId: value,
+    });
+  };
+
   const resetFilter = () => {
     setQueryParams({
       ...queryParams,
       sortByPrice: null,
       search_key: null,
+      categoryId: null,
     });
   };
 
@@ -164,6 +172,7 @@ function Menu() {
               value: item.id,
               label: item.type,
             }))}
+            onChange={(value) => onChangeCategory(value)}
           />
           <Select
             placeholder="--Giá--"

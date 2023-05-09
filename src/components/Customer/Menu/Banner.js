@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function Banner() {
+export default function Banner(props) {
   return (
     <div className="menu-page">
       <div className="banner">
@@ -8,7 +8,7 @@ export default function Banner() {
           <img src="/images/chef.png"></img>
           <div>
             <p className="cus-name">
-              Xin chào, <span>Nguyễn Văn A</span> !
+              Xin chào, <span>{props.customerName}</span> !
             </p>
             <p>Tham khảo menu tại nhà hàng chúng tôi.</p>
           </div>

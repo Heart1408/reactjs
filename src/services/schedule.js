@@ -12,6 +12,8 @@ const updateStatusBillAPI = (payload) =>
   api.post(`/table/updateStatusBill`, payload);
 const paymentConfirmAPI = (payload) =>
   api.post(`/table/paymentConfirm`, payload);
+const updateTableStatusAPI = (payload) =>
+  api.post(`/table/updateStatus`, payload);
 
 export {
   getScheduleAPI,
@@ -22,4 +24,5 @@ export {
   updateStatusBillAPI,
   paymentConfirmAPI,
   updateScheduleAPI,
+  updateTableStatusAPI,
 };

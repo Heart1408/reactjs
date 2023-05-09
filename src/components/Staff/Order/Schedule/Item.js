@@ -20,6 +20,7 @@ function Item(props) {
       message.success(success);
       handleCloseModel();
       props.refetch();
+      props.refetchFloor();
       return;
     }
     message.error(error || "Có lỗi xảy ra");
@@ -39,6 +40,7 @@ function Item(props) {
     initialValues: initialValues,
     enableReinitialize: true,
     onSubmit: (values) => {
+      console.log("ddd", values);
       mutateUpdateSchedule.mutate(values);
     },
   });
@@ -188,7 +190,6 @@ function Item(props) {
               placeholder="Chọn thời gian"
               disabledDate={disabledDate}
               disabledTime={disabledDateTime}
-              // defaultValue={dayjs(time)}
               value={dayjs(formik.values.time)}
               onChange={(value) => {
                 console.log("time", value.format("YYYY-MM-DD HH:mm:ss"));

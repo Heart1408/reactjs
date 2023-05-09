@@ -5,19 +5,29 @@ import {
   useConfirmOrder,
   useSendFeedback,
 } from "../../hooks/customer/booking";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { formatPrice } from "../../utils/common";
+import { getToken } from "../../services/api";
 import { BILL_STATUS, BOOKING_STATUS } from "../../constants";
 import { Row, Col, Button, List, Input, Rate, Modal, message } from "antd";
-import { ExclamationCircleOutlined, UndoOutlined } from "@ant-design/icons";
+import {
+  ExclamationCircleOutlined,
+  UndoOutlined,
+  LogoutOutlined,
+} from "@ant-design/icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark, faArrowRight } from "@fortawesome/free-solid-svg-icons";
+import { handleCustomerLogout } from "../../redux/login/slice";
 
 const { TextArea } = Input;
 const red = "rgb(128, 0, 0)";
-const navy = "rgb(19, 19, 57)";
 const activecolor = "rgb(30, 100, 156)";
 
 export default function Booking() {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const feedbackRef = useRef(null);
   const [rate, setRate] = useState(null);
   const [comment, setComment] = useState("");
@@ -35,6 +45,13 @@ export default function Booking() {
   const bookingStatus = dataOrderedDishesResponse?.data.status;
   const bookingId = dataOrderedDishesResponse?.data.booking_id;
   const hasFeedback = dataOrderedDishesResponse?.data.rate !== null;
+
+  const handleLogout = (e) => {
+    e.preventDefault();
+    dispatch(handleCustomerLogout({}));
+    getToken("");
+    navigate("/customer/menu");
+  };
 
   useEffect(() => {
     if (listOrderedDishesData) {
@@ -159,6 +176,16 @@ export default function Booking() {
           <div>
             <p className="cus-name">
               Xin chào, <span>{customerName}</span> !
+              {bookingStatus === BOOKING_STATUS.PAID && (
+                <LogoutOutlined
+                  onClick={handleLogout}
+                  style={{
+                    marginLeft: "15px",
+                    color: "white",
+                    fontSize: "18px",
+                  }}
+                />
+              )}
             </p>
             <p className="slogan">Đây là thực đơn hôm nay của bạn.</p>
             <a onClick={goToFeedback}>

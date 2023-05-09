@@ -1,5 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { Select, Row, Col, Button, Space, Modal, Input, Form } from "antd";
+import { useUpdateTableStatus } from "../../../../hooks/schedule";
+import {
+  Select,
+  Row,
+  Col,
+  Button,
+  Space,
+  Modal,
+  Input,
+  Form,
+  message,
+} from "antd";
 import { STATUS_TABLE_COLOR, TABLE_STATUS } from "../../../../constants";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPenToSquare, faPlus } from "@fortawesome/free-solid-svg-icons";
@@ -19,6 +30,7 @@ function Layout(props) {
   const [selectedTable, setSelectedTable] = useState({});
   const [showItemBar, setShowItemBar] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [note, setNote] = useState(null);
 
   let listTable = [];
   if (selectedFloor !== null && floors !== undefined) {
@@ -40,6 +52,26 @@ function Layout(props) {
   }
   const handleCancel = () => {
     setIsModalOpen(false);
+  };
+
+  const response = (isSuccess, success = null, error = null) => {
+    if (isSuccess) {
+      message.success(success);
+      props.refetchFloor();
+      handleCancel();
+      setNote(null);
+      return;
+    }
+    message.error(error || "Đã có lỗi xảy ra!");
+  };
+
+  const updateTableStatus = useUpdateTableStatus(response);
+  const handleUpdateStatusTable = () => {
+    updateTableStatus.mutate({
+      table_id: selectedTable.id,
+      status: selectedTable.status,
+      note: note,
+    });
   };
 
   return (
@@ -118,7 +150,7 @@ function Layout(props) {
                         }}
                       >
                         {item.name}
-                        <Button onClick={editTableStatus}>
+                        <Button onClick={() => editTableStatus()}>
                           <FontAwesomeIcon
                             // id={item.newId}
                             icon={faPenToSquare}
@@ -128,7 +160,7 @@ function Layout(props) {
                     ))}
 
                     <Modal
-                      title="Trạng thái bàn hiện tại - Bàn 2"
+                      title={`Trạng thái bàn hiện tại - ${selectedTable.name}`}
                       open={isModalOpen}
                       onCancel={handleCancel}
                       footer={[]}
@@ -138,28 +170,53 @@ function Layout(props) {
                       // onFinish={formik.handleSubmit}
                       >
                         <Select
-                          defaultValue="Bàn trống"
-                          options={[
-                            {
-                              value: 1,
-                              label: "Bàn trống",
-                            },
-                            {
-                              value: 2,
-                              label: "Đang có khách",
-                            },
-                            {
-                              value: 3,
-                              label: "Đang chưa sẵn sàng",
-                            },
-                          ]}
+                          value={selectedTable.status}
+                          options={
+                            selectedTable.status === TABLE_STATUS.GUESTS
+                              ? [
+                                  {
+                                    value: TABLE_STATUS.READY,
+                                    label: "Bàn trống",
+                                  },
+                                  {
+                                    value: TABLE_STATUS.NOTREADY,
+                                    label: "Đang chưa sẵn sàng",
+                                  },
+                                  {
+                                    value: TABLE_STATUS.GUESTS,
+                                    label: "Đang có khách",
+                                  },
+                                ]
+                              : [
+                                  {
+                                    value: TABLE_STATUS.READY,
+                                    label: "Bàn trống",
+                                  },
+                                  {
+                                    value: TABLE_STATUS.NOTREADY,
+                                    label: "Đang chưa sẵn sàng",
+                                  },
+                                ]
+                          }
                           style={{ width: "100%", margin: "10px 0" }}
+                          onChange={(value) =>
+                            setSelectedTable({
+                              ...selectedTable,
+                              status: value,
+                            })
+                          }
                         />
-                        <TextArea placeholder="Ghi chú ..." rows="3"></TextArea>
+                        <TextArea
+                          placeholder="Ghi chú ..."
+                          rows="3"
+                          value={note}
+                          onChange={(e) => setNote(e.target.value)}
+                        ></TextArea>
                         <Button
                           type="primary"
                           htmlType="submit"
                           style={{ width: "100%", marginTop: "15px" }}
+                          onClick={handleUpdateStatusTable}
                         >
                           Cập nhật
                         </Button>

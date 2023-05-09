@@ -4,7 +4,7 @@ import {
   useUpdateStatusBill,
   usePaymentConfirm,
 } from "../../../../hooks/schedule";
-import { QuestionCircleOutlined } from "@ant-design/icons";
+import { QuestionCircleOutlined, UndoOutlined } from "@ant-design/icons";
 import { formatPrice } from "../../../../utils/common";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -41,6 +41,7 @@ export default function TableDetail(props) {
   const bill = dataTableResponse?.data.bill;
   const bookingId = dataTableResponse?.data.booking_id;
   const bookingStatus = dataTableResponse?.data.status;
+  const note = dataTableResponse?.data.note;
   const paymentConfirmable = dataTableResponse?.data.payment_confirmable;
 
   const [data, setData] = useState([]);
@@ -208,7 +209,8 @@ export default function TableDetail(props) {
                 <p>{props.tableInfo?.name} - Tầng 1</p>
                 <p>
                   Khách hàng: {tableDetail?.customer_name} - SĐT:{" "}
-                  {tableDetail?.customer_phone}
+                  {tableDetail?.customer_phone}{" "}
+                  <UndoOutlined onClick={() => refetch()} />
                 </p>
                 {bill && bill.length > 0 ? (
                   <>
@@ -224,9 +226,7 @@ export default function TableDetail(props) {
                       // }
                     />
                     <div className="note">
-                      <FontAwesomeIcon icon={faPen} />3 người3 người3 người3
-                      ngườiv3 ngườivvv3 người3 người3 người3 ngườivvv3
-                      ngườivvvvvvv3 ngườivv3 người3 người3 người3 người
+                      <FontAwesomeIcon icon={faPen} />3 người {note}
                     </div>
                     <div className="total-price">
                       <div>

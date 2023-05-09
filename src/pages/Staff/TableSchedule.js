@@ -18,7 +18,11 @@ function TableSchedule() {
 
   const [selectedDate, setSelectedDate] = useState(format(today, formatDBDate));
 
-  const { data: dataFloorsResponse, isSuccess } = useGetFloor();
+  const {
+    data: dataFloorsResponse,
+    isSuccess,
+    refetch: refetchFloor,
+  } = useGetFloor();
   const floors = dataFloorsResponse?.data;
 
   const { data: dataSchedulesResponse, refetch } = useGetSchedule(selectedDate);
@@ -79,6 +83,7 @@ function TableSchedule() {
               data={listScheduleItem}
               listFloor={floors}
               refetch={refetch}
+              refetchFloor={refetchFloor}
             />
           ) : (
             ""
@@ -233,7 +238,7 @@ function TableSchedule() {
     {
       key: "1",
       label: `Quản lý bàn`,
-      children: <Layout listFloor={floors} />,
+      children: <Layout listFloor={floors} refetchFloor={refetchFloor} />,
     },
     {
       key: "2",

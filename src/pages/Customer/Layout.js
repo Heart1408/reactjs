@@ -1,5 +1,5 @@
 import React, { createContext, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import { getToken } from "../../services/api";
 import { isExpired } from "../../utils/common";
 import { Outlet } from "react-router-dom";
