@@ -14,6 +14,8 @@ const paymentConfirmAPI = (payload) =>
   api.post(`/table/paymentConfirm`, payload);
 const updateTableStatusAPI = (payload) =>
   api.post(`/table/updateStatus`, payload);
+const addDishToBookingAPI = (payload) =>
+  api.post(`/table/addDishToBooking`, payload);
 
 export {
   getScheduleAPI,
@@ -25,4 +27,5 @@ export {
   paymentConfirmAPI,
   updateScheduleAPI,
   updateTableStatusAPI,
+  addDishToBookingAPI,
 };

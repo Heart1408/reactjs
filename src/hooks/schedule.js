@@ -1,13 +1,13 @@
 import {
   getScheduleAPI,
   getFloorAPI,
-  getListTableAPI,
   createScheduleAPI,
   updateScheduleAPI,
   getTableStatusCurrentAPI,
   updateStatusBillAPI,
   paymentConfirmAPI,
   updateTableStatusAPI,
+  addDishToBookingAPI,
 } from "../services/schedule";
 import { useMutation, useQuery } from "react-query";
 
@@ -53,30 +53,6 @@ export const useGetFloor = () => {
   });
 
   return useFetchFloor;
-};
-
-export const useGetListTable = (floor_id) => {
-  const handleGetListTable = async () => {
-    try {
-      const response = await getListTableAPI(floor_id);
-      if (!response?.success) {
-        throw response?.message;
-      }
-      return response;
-    } catch (error) {
-      throw error;
-    }
-  };
-
-  const useFetchListTable = useQuery(
-    ["getListTable", floor_id],
-    handleGetListTable,
-    {
-      refetchOnWindowFocus: false,
-    }
-  );
-
-  return useFetchListTable;
 };
 
 export const useCreateSchedule = (callback) => {
@@ -226,4 +202,29 @@ export const useUpdateTableStatus = (callback) => {
   );
 
   return useMutationUpdateTableStatus;
+};
+
+export const useAddDishToBooking = (callback) => {
+  const handleAddDishToBooking = async (params) => {
+    try {
+      const response = await addDishToBookingAPI(params);
+      if (!response?.success) {
+        throw response?.message;
+      }
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  const useMutationAddDishToBooking = useMutation(
+    ["addDishToBooking"],
+    handleAddDishToBooking,
+    {
+      onSuccess: (res) => callback(true, res.message),
+      onError: (res) => callback(false, null, res),
+    }
+  );
+
+  return useMutationAddDishToBooking;
 };

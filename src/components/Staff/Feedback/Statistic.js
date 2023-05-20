@@ -21,21 +21,12 @@ export default function Statistic(props) {
         </div>
         <div className="rate">
           <Divider orientation="center"> Số lượt đánh giá:</Divider>
-          <div>
-            <Rate value={5} disabled /> {statistic.rate_5}
-          </div>
-          <div>
-            <Rate value={4} disabled /> {statistic.rate_4}
-          </div>
-          <div>
-            <Rate value={3} disabled /> {statistic.rate_3}
-          </div>
-          <div>
-            <Rate value={2} disabled /> {statistic.rate_2}
-          </div>
-          <div>
-            <Rate value={1} disabled /> {statistic.rate_1}
-          </div>
+          {[5, 4, 3, 2, 1].map((rate) => (
+            <div key={rate}>
+              <Rate value={rate} disabled />{" "}
+              {statistic[`rate_${rate}`]}
+            </div>
+          ))}
           <p>Đã xem: {statistic.read}</p>
           <p>Chưa xem: {statistic.unread}</p>
         </div>

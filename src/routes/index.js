@@ -10,6 +10,8 @@ import Feedback from "../pages/Staff/Feedback";
 import StaffManagement from "../pages/Staff/StaffManagement";
 import TableSchedule from "../pages/Staff/TableSchedule";
 import Customer from "../pages/Staff/Customer";
+import AddBooking from "../pages/Staff/Booking";
+import TableStatus from "../pages/Staff/TableStatus";
 import Error from "../pages/Error";
 
 const customerRoutes = [
@@ -26,7 +28,9 @@ const staffRoutes = [
   { path: "/staff/feedback", component: Feedback },
   { path: "/staff/staffmanagement", component: StaffManagement },
   { path: "/staff/tableschedule", component: TableSchedule },
+  { path: "/staff/tableStatus", component: TableStatus },
   { path: "/staff/customermanagement", component: Customer },
+  { path: "/staff/booking", component: AddBooking },
 ];
 
 export { customerRoutes, staffRoutes, staffLoginRoute, errorPage };

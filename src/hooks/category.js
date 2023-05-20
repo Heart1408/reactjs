@@ -9,8 +9,8 @@ import {
 } from "../services/category";
 import { useMutation, useQuery } from "react-query";
 
-export const useGetListCategory = () => {
-  const handleGetListCategory = async () => {
+export const useGetCategories = () => {
+  const handleGetCategories = async () => {
     try {
       const response = await getCategoryAPI();
       if (!response?.success) {
@@ -22,15 +22,15 @@ export const useGetListCategory = () => {
     }
   };
 
-  const useFetchListCategory = useQuery(
+  const useFetchCategories = useQuery(
     ["getCategory"],
-    handleGetListCategory,
+    handleGetCategories,
     {
       refetchOnWindowFocus: false,
     }
   );
 
-  return useFetchListCategory;
+  return useFetchCategories;
 };
 
 export const useCreateCategory = (callback) => {

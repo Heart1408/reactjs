@@ -14,7 +14,6 @@ import { Layout, theme, Row, Col } from "antd";
 const { Header, Content } = Layout;
 
 function Layouts() {
-  const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState(false);
   const {
     token: { colorBgContainer },

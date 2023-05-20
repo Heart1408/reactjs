@@ -22,11 +22,13 @@ const Menu = () => {
   const token = useSelector(
     (state) => state.AuthenticationSlice?.confirmCustomerToken
   );
-  const [confirmCus, setConfirmCus] = useState(token !== "");
+  const [confirmCus, setConfirmCus] = useState(token !== undefined &&  token !== "");
 
   if (!isExpired(token)) {
     getToken(token);
   }
+
+  console.log("chekc", confirmCus);
 
   return (
     <>

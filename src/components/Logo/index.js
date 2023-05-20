@@ -27,7 +27,7 @@ const Logo = styled.div`
   .first {
     color: #131339;
     display: flex;
-    align-items: end;
+    align-items: flex-end;
 
     .eas {
       border-bottom: 3px solid #131339;

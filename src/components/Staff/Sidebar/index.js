@@ -18,6 +18,7 @@ import {
   faChartLine,
   faRightFromBracket,
   faUsers,
+  faPen,
 } from "@fortawesome/free-solid-svg-icons";
 import { UserOutlined } from "@ant-design/icons";
 import { Avatar } from "antd";
@@ -47,20 +48,20 @@ function Sidebar(props) {
 
   const menuItems = [
     {
-      key: "1",
+      key: "2",
       label: (
-        <NavLink to="/staff/home" className="list-group-item">
-          <FontAwesomeIcon icon={faChartLine} size="lg" />
-          <span className={`nav-text ${hiddenClass}`}>Tổng quan</span>
+        <NavLink to="/staff/tableStatus" className="list-group-item">
+          <FontAwesomeIcon icon={faTable} size="lg" />
+          <span className={`nav-text ${hiddenClass}`}>Danh sách bàn</span>
         </NavLink>
       ),
     },
     {
-      key: "2",
+      key: "7",
       label: (
         <NavLink to="/staff/tableschedule" className="list-group-item">
-          <FontAwesomeIcon icon={faTable} size="lg" />
-          <span className={`nav-text ${hiddenClass}`}> Đặt bàn</span>
+          <FontAwesomeIcon icon={faPen} size="lg" />
+          <span className={`nav-text ${hiddenClass}`}>Lịch đặt bàn</span>
         </NavLink>
       ),
     },

@@ -110,7 +110,7 @@
 
   .total-price {
     display: flex;
-    justify-content: end;
+    justify-content: flex-end;
     margin: 8px 10px 2px 0;
     font-size: 17px;
 
@@ -142,7 +142,7 @@ img {
 }
 
 .layout-detail {
-  min-height: 450px;
+  min-height: 320px;
 
   .status {
     border-radius: 4px;
@@ -179,7 +179,7 @@ img {
 
     .total-p {
       display: flex;
-      justify-content: end;
+      justify-content: flex-end;
     }
   
     .no-data {

@@ -51,6 +51,7 @@ export default function Booking() {
     dispatch(handleCustomerLogout({}));
     getToken("");
     navigate("/customer/menu");
+    window.location.reload();
   };
 
   useEffect(() => {
